@@ -6,6 +6,7 @@
 /* Define functions */
 void command_loop();
 char * read_input();
+char ** parse_input(char *input);
 
 //This is a simple OS shell designed by our team!
 int main(int argc, char const *argv[])
@@ -25,6 +26,7 @@ void command_loop()
 {
   int status;
   char *input;
+  char **arguments;
 
   do{
     //Prompt
@@ -32,12 +34,14 @@ void command_loop()
     //Read
     input = read_input();
     //Parse
+    arguments = parse_input(input);
     //Execute
 
   }while (status);
 
 }
 
+//Reads in user input
 char * read_input()
 {
   size_t buffer_size = STRINGSIZE;
@@ -45,4 +49,13 @@ char * read_input()
 
   getline(&line,&buffer_size,stdin);
   return line;
+}
+
+//Parses user input
+// Personal note ( This function is a pointer that points to pointers)
+char ** parse_input(char *input)
+{
+  char * token;
+  //strtok used here
+
 }
