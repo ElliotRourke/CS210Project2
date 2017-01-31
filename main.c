@@ -1,10 +1,11 @@
 #include <stdio.h>
 
-//Define global variables
+/* Define constants */
+#define STRINGSIZE 512
 
-
-//Define functions
+/* Define functions */
 void command_loop();
+char * read_input();
 
 //This is a simple OS shell designed by our team!
 int main(int argc, char const *argv[])
@@ -23,12 +24,25 @@ int main(int argc, char const *argv[])
 void command_loop()
 {
   int status;
+  char *input;
 
   do{
+    //Prompt
+    printf("$ ");
     //Read
+    input = read_input();
     //Parse
     //Execute
 
   }while (status);
 
+}
+
+char * read_input()
+{
+  size_t buffer_size = STRINGSIZE;
+  char * line = NULL;
+
+  getline(&line,&buffer_size,stdin);
+  return line;
 }
