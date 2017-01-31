@@ -19,7 +19,6 @@
 #implementation, etc).
 
 #The shell should support the following functionality:
-Your shell should support the following functionality:
 1. Execution of external system programs including their parameters.
 2. The following built-in commands:
   a. cd – change working directory
