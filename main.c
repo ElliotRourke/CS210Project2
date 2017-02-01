@@ -9,6 +9,7 @@
 void command_loop();
 char *read_input();
 char **parse_input(char *input);
+int execute_input(char **arguments);
 
 //This is a simple OS shell designed by our team!
 int main(int argc, char const *argv[])
@@ -38,7 +39,11 @@ void command_loop()
     //Parse
     arguments = parse_input(input);
     //Execute
+    status = execute_input(arguments);
 
+    free(input);
+    free(arguments);
+    
   }while (status);
 
 }
@@ -69,8 +74,6 @@ char **parse_input(char *input)
   while( token != NULL){
       tokens[index] = token;
       index++;
-      /* *******   TEST PRINT PLEASE REMOVE WHEN COMPLETE     ******** */
-      printf("%s\n",token);
       token = strtok(NULL, delimiters);
   }
 
@@ -79,6 +82,7 @@ char **parse_input(char *input)
   return tokens;
 }
 
-int execute_input(){
+int execute_input(char **arguments){
 
+  return 1;
 }
