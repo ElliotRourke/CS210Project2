@@ -56,6 +56,11 @@ char * read_input()
 char ** parse_input(char *input)
 {
   char * token;
+
   //strtok used here
+
+}
+
+int execute_input(){
 
 }
