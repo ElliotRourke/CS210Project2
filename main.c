@@ -62,7 +62,7 @@ char **parse_input(char *input)
   int index = 0;
   char delimiters[] = " \t | > < & ;";
   char *token;
-  char **tokens = malloc(bufsize * sizeof(char*));
+  char **tokens = malloc(buffer_size * sizeof(char*));
 
   token = strtok(input,delimiters);
 
