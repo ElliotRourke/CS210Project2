@@ -58,7 +58,7 @@ char *read_input()
 char **parse_input(char *input)
 {
 
-  int bufsize = STRINGSIZE;
+  int buffer_size = STRINGSIZE;
   int index = 0;
   char delimiters[] = " \t | > < & ;";
   char *token;
