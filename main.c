@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "functions.h"
 
 /* Define constants */
 #define STRINGSIZE 512
@@ -43,7 +44,7 @@ void command_loop()
 
     free(input);
     free(arguments);
-    
+
   }while (status);
 
 }
@@ -83,6 +84,18 @@ char **parse_input(char *input)
 }
 
 int execute_input(char **arguments){
+  // function that will call lots of other functions
+
+  if((strcmp(arguments[0],"exit") > 0))
+  {
+    return 0;
+  }
+
+  if((strcmp(arguments[0],"cd") > 0))
+  {
+      int b = 1;
+      shell_cd(b);
+  }
 
   return 1;
 }
