@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "internalf.h"
+#include "infunctions.h"
 
 
 /* Define functions*/
