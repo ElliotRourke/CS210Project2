@@ -15,12 +15,8 @@ int execute_input(char **arguments);
 //This is a simple OS shell designed by our team!
 int main(int argc, char const *argv[])
 {
-  //Firstly initialize the shell - load any configs etc
 
-  //Secondly enter "command loop"
   command_loop();
-  //Perform clean-up for exit/shut-down
-
 
   return 0;
 }
@@ -81,7 +77,6 @@ char **parse_input(char *input)
   while( token != NULL){
       tokens[index] = token;
       index++;
-      printf("'%s'\n",token);
 
       if(buffer_size >= index)
       {
@@ -102,14 +97,16 @@ char **parse_input(char *input)
 
 int execute_input(char **arguments){
   // function that will call lots of other functions
+  // Is this an efficient or elegant way to call the functions?
 
   if(arguments[0] == NULL)
   {
     return 1;
   }
 
-  if((strcmp(arguments[0],"exit") == 0))
+  if((strcmp(arguments[0],"exit") == 0) || (**arguments == 120))
   {
+    printf("\n");
     return 0;
   }
 
