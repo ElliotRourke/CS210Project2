@@ -4,7 +4,7 @@
 #include "infunctions.h"
 
 /* Define constants */
-#define STRINGSIZE 512
+#define STRINGSIZE 50
 
 /* Define functions */
 void command_loop();
@@ -108,8 +108,18 @@ int execute_input(char **arguments){
 
   if((strcmp(arguments[0],"cd") == 0))
   {
-      int b = 1;
-      shell_cd(b);
+    shell_cd(arguments);
+  }
+
+  //TODO
+  if((strcmp(arguments[0],"ls") == 0))
+  {
+    shell_ls(arguments);
+  }
+
+  if((strcmp(arguments[0],"clear") == 0))
+  {
+    shell_clear();
   }
 
   return 1;
