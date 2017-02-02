@@ -15,7 +15,6 @@ int execute_input(char **arguments);
 //This is a simple OS shell designed by our team!
 int main(int argc, char const *argv[])
 {
-
   command_loop();
 
   return 0;
@@ -59,7 +58,6 @@ char *read_input()
 // Personal note ( This function is a pointer that points to pointers)
 char **parse_input(char *input)
 {
-
   int buffer_size = STRINGSIZE + 1;
   int index = 0;
   char delimiters[] = " \t | > < & ; \n";
@@ -71,7 +69,6 @@ char **parse_input(char *input)
       fprintf(stderr, "Shell: Error allocating memory.\n");
       exit(EXIT_FAILURE);
   }
-
   token = strtok(input,delimiters);
 
   while( token != NULL){
@@ -89,7 +86,6 @@ char **parse_input(char *input)
       }
       token = strtok(NULL, delimiters);
   }
-
   tokens[index] = NULL;
 
   return tokens;
