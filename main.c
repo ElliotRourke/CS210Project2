@@ -64,9 +64,9 @@ char *read_input()
 char **parse_input(char *input)
 {
 
-  int buffer_size = STRINGSIZE;
+  int buffer_size = STRINGSIZE + 1;
   int index = 0;
-  char delimiters[] = " \t | > < & ;";
+  char delimiters[] = " \t | > < & ; \n";
   char *token;
   char **tokens = malloc(buffer_size * sizeof(char*));
 
@@ -75,7 +75,9 @@ char **parse_input(char *input)
   while( token != NULL){
       tokens[index] = token;
       index++;
+      printf("'%s'\n",token);
       token = strtok(NULL, delimiters);
+
   }
 
   tokens[index] = NULL;
@@ -86,12 +88,12 @@ char **parse_input(char *input)
 int execute_input(char **arguments){
   // function that will call lots of other functions
 
-  if((strcmp(arguments[0],"exit") > 0))
+  if((strcmp(arguments[0],"exit") == 0))
   {
     return 0;
   }
 
-  if((strcmp(arguments[0],"cd") > 0))
+  if((strcmp(arguments[0],"cd") == 0))
   {
       int b = 1;
       shell_cd(b);
