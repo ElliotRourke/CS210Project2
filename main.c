@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "internalf.h"
+#include "infunctions.h"
 
 /* Define constants */
 #define STRINGSIZE 512
