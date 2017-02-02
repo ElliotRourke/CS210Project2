@@ -52,7 +52,7 @@ void command_loop()
 //Reads in user input
 char *read_input()
 {
-  size_t buffer_size = STRINGSIZE;
+  ssize_t buffer_size = STRINGSIZE;
   char * line = NULL;
 
   getline(&line,&buffer_size,stdin);
@@ -70,14 +70,29 @@ char **parse_input(char *input)
   char *token;
   char **tokens = malloc(buffer_size * sizeof(char*));
 
+  if(!tokens)
+  {
+      fprintf(stderr, "Shell: Error allocating memory.\n");
+      exit(EXIT_FAILURE);
+  }
+
   token = strtok(input,delimiters);
 
   while( token != NULL){
       tokens[index] = token;
       index++;
       printf("'%s'\n",token);
-      token = strtok(NULL, delimiters);
 
+      if(buffer_size >= index)
+      {
+        tokens = realloc(tokens,buffer_size * sizeof(char*));
+        if(!tokens)
+        {
+            fprintf(stderr, "Shell: Error allocating memory.\n");
+            exit(EXIT_FAILURE);
+        }
+      }
+      token = strtok(NULL, delimiters);
   }
 
   tokens[index] = NULL;
@@ -87,6 +102,11 @@ char **parse_input(char *input)
 
 int execute_input(char **arguments){
   // function that will call lots of other functions
+
+  if(arguments[0] == NULL)
+  {
+    return 1;
+  }
 
   if((strcmp(arguments[0],"exit") == 0))
   {
