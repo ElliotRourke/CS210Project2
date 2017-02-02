@@ -1,5 +1,6 @@
-#include "functions.h"
 #include <stdio.h>
+#include "internalf.h"
+
 
 /* Define functions*/
 int shell_cd(int b)
