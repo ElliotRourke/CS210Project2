@@ -10,13 +10,11 @@
 
 #Be properly formatted.
 
-#Be well organized (i.e. broken up into reasonable, cohesive functions with
-#no unnecessary fragmentation into files, minimal use of global variables, and
-#reasonable variable and function names).
+#Be well organized 
+(i.e. broken up into reasonable, cohesive functions with no unnecessary fragmentation into files, minimal use of global variables, and reasonable variable and function names).
 
-#Be well documented (i.e. description in code
-#comments of all methods, assumptions that must hold at key points of the
-#implementation, etc).
+#Be well documented 
+(i.e. description in code comments of all methods, assumptions that must hold at key points of the implementation, etc).
 
 #The shell should support the following functionality:
 1. Execution of external system programs including their parameters.
