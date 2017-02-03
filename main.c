@@ -19,6 +19,10 @@ int create_process(char **arguments);
 //This is a simple OS shell designed by our team!
 int main(int argc, char const *argv[])
 {
+
+  //TODO
+  // Initialise shell with "setenv" so that it can,
+  // use PATH for paths and other parameters external functions need.
   command_loop();
 
   return 0;
