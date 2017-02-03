@@ -16,15 +16,3 @@ int shell_cd(char **arguments)
   }
   return 1;
 }
-
-int shell_ls(char **arguments)
-{
-  printf("THIS CURRENTLY DOES NOTHING :D \n");
-}
-
-int shell_clear()
-{
-  const char* CLEAR_SCREEN = "\e[1;1H\e[2J";
-  write(STDOUT_FILENO,CLEAR_SCREEN,12);
-  return 1;
-}
