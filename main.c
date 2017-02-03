@@ -94,7 +94,9 @@ char **parse_input(char *input)
 int execute_input(char **arguments){
   // function that will call lots of other functions
   // Is this an efficient or elegant way to call the functions?
-
+  // what about a char list that holds "functions" like the one we have for delimiters?
+  //Might let us use a switch statement or something?
+  //Maybe multiple IF's is not "clean" but is "elegant"
   if(arguments[0] == NULL)
   {
     return 1;
