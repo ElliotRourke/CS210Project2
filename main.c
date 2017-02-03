@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <unistd.h>
 #include "infunctions.h"
 
 /* Define constants */
@@ -11,6 +14,7 @@ void command_loop();
 char *read_input();
 char **parse_input(char *input);
 int execute_input(char **arguments);
+int create_process(char **arguments);
 
 //This is a simple OS shell designed by our team!
 int main(int argc, char const *argv[])
@@ -108,21 +112,29 @@ int execute_input(char **arguments){
     return 0;
   }
 
-  if((strcmp(arguments[0],"cd") == 0))
-  {
-    shell_cd(arguments);
-  }
+  return create_process(arguments);
+}
 
-  //TODO
-  if((strcmp(arguments[0],"ls") == 0))
-  {
-    shell_ls(arguments);
-  }
+int create_process(char **arguments)
+{
+  pid_t pid;
 
-  if((strcmp(arguments[0],"clear") == 0))
-  {
-    shell_clear();
-  }
+  pid = fork();
 
+  if(pid < 0)
+  {
+    fprintf(stderr, "Fork Failed\n");
+    perror("Shell");
+    exit(-1);
+  }
+  else if(pid == 0)
+  {
+    execvp(arguments[0],arguments);
+  }
+  else
+  {
+    wait(NULL);
+    return 1;
+  }
   return 1;
 }
