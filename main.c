@@ -112,6 +112,12 @@ int execute_input(char **arguments){
     return 0;
   }
 
+  if((strcmp(arguments[0],"cd") == 0))
+  {
+    shell_cd(arguments);
+    return 1;
+  }
+
   return create_process(arguments);
 }
 
