@@ -107,6 +107,12 @@ int execute_input(char **arguments){
     return 1;
   }
 
+  if((strcmp(arguments[0],"history") == 0))
+  {
+    printf("IS HARD!\n");
+    return 1;
+  }
+
   if((strcmp(arguments[0],"exit") == 0) || (**arguments == 120))
   {
     printf("\n");
@@ -131,11 +137,6 @@ int execute_input(char **arguments){
   if((strcmp(arguments[0],"help") == 0))
   {
     return shell_help();
-  }
-
-  if((strcmp(arguments[0],"history") == 0))
-  {
-    return shell_history(arguments);
   }
 
   return create_process(arguments);

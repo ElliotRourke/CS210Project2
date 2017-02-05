@@ -4,8 +4,6 @@
 #include <string.h>
 #include "infunctions.h"
 
-#define HISTORYSIZE 20
-
 /* Define functions*/
 int shell_cd(char **arguments)
 {
@@ -44,12 +42,8 @@ int shell_setpath(char **arguments)
   return 1;
 }
 
-int shell_history(char **arguments)
+int shell_history()
 {
-  char *item = *arguments;
-  printf("%s\n",item);
-
-  printf("You've reached history!\n");
 
   return 1;
 }
