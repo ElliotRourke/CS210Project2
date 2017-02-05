@@ -46,7 +46,10 @@ int shell_setpath(char **arguments)
 
 int shell_history(char **arguments)
 {
-  char **items = malloc(HISTORYSIZE * sizeof(char*));
+  char *item = *arguments;
+  printf("%s\n",item);
+
+  printf("You've reached history!\n");
 
   return 1;
 }
