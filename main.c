@@ -118,20 +118,17 @@ int execute_input(char **arguments){
 
   if((strcmp(arguments[0],"cd") == 0))
   {
-    shell_cd(arguments);
-    return 1;
+    return shell_cd(arguments);
   }
 
   if((strcmp(arguments[0],"getpath") == 0))
   {
-    shell_getpath();
-    return 1;
+    return shell_getpath();
   }
 
   if((strcmp(arguments[0],"setpath") == 0))
   {
-    shell_setpath(arguments);
-    return 1;
+    return shell_setpath(arguments);
   }
 
   return create_process(arguments);
