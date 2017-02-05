@@ -38,8 +38,7 @@ void command_loop()
 
   do{
     //Prompt
-    printf("%s",  getcwd(buf,sizeof(buf)));
-    printf("$ ");
+    printf("%s$ ",  getcwd(buf,sizeof(buf)));
     //Read
     input = read_input();
     //Parse
