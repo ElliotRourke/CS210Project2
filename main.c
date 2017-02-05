@@ -34,9 +34,11 @@ void command_loop()
   int status;
   char *input;
   char **arguments;
+  char buf[1024];
 
   do{
     //Prompt
+    printf("%s",  getcwd(buf,sizeof(buf)));
     printf("$ ");
     //Read
     input = read_input();
