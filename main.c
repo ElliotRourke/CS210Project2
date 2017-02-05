@@ -101,14 +101,10 @@ char **parse_input(char *input)
 }
 
 int execute_input(char **arguments){
-  // function that will call lots of other functions
-  // Is this an efficient or elegant way to call the functions?
-  // what about a char list that holds "functions" like the one we have for delimiters?
-  //Might let us use a switch statement or something?
-  //Maybe multiple IF's is not "clean" but is "elegant"
+
   if(arguments[0] == NULL)
   {
-    return 0;
+    return 1;
   }
 
   if((strcmp(arguments[0],"exit") == 0) || (**arguments == 120))
@@ -135,6 +131,11 @@ int execute_input(char **arguments){
   if((strcmp(arguments[0],"help") == 0))
   {
     return shell_help();
+  }
+
+  if((strcmp(arguments[0],"history") == 0))
+  {
+    return shell_history(arguments);
   }
 
   return create_process(arguments);

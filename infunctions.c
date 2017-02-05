@@ -1,7 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
 #include "infunctions.h"
+
+#define HISTORYSIZE 20
 
 /* Define functions*/
 int shell_cd(char **arguments)
@@ -38,6 +41,13 @@ int shell_setpath(char **arguments)
     printf("NEW PATH SET : \n");
     shell_getpath();
   }
+  return 1;
+}
+
+int shell_history(char **arguments)
+{
+  char **items = malloc(HISTORYSIZE * sizeof(char*));
+
   return 1;
 }
 
