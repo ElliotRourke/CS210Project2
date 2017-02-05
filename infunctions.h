@@ -3,7 +3,5 @@
 
 /* Define functions*/
 int shell_cd(char **arguments);
-int shell_ls(char **arguments);
-int shell_clear();
 
 #endif

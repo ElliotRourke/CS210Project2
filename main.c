@@ -19,6 +19,8 @@ int create_process(char **arguments);
 //This is a simple OS shell designed by our team!
 int main(int argc, char const *argv[])
 {
+  extern char **environ;
+
 
   //TODO
   // Initialise shell with "setenv" so that it can,
@@ -107,7 +109,7 @@ int execute_input(char **arguments){
   //Maybe multiple IF's is not "clean" but is "elegant"
   if(arguments[0] == NULL)
   {
-    return 1;
+    return 0;
   }
 
   if((strcmp(arguments[0],"exit") == 0) || (**arguments == 120))
@@ -128,7 +130,6 @@ int execute_input(char **arguments){
 int create_process(char **arguments)
 {
   pid_t pid;
-
   pid = fork();
 
   if(pid < 0)
@@ -139,7 +140,11 @@ int create_process(char **arguments)
   }
   else if(pid == 0)
   {
-    execvp(arguments[0],arguments);
+    if(execvp(arguments[0],arguments) == -1)
+    {
+      perror("Shell");
+    }
+    exit(EXIT_FAILURE);
   }
   else
   {
