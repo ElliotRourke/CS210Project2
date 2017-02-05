@@ -3,5 +3,7 @@
 
 /* Define functions*/
 int shell_cd(char **arguments);
+int shell_getpath();
+int shell_setpath(char **arguments);
 
 #endif

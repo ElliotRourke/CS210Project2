@@ -19,14 +19,12 @@ int create_process(char **arguments);
 //This is a simple OS shell designed by our team!
 int main(int argc, char const *argv[])
 {
-  extern char **environ;
-
-
-  //TODO
-  // Initialise shell with "setenv" so that it can,
-  // use PATH for paths and other parameters external functions need.
+  const char *old_path = getenv("PATH");
+  chdir(getenv("HOME"));
   command_loop();
-
+  printf("Restoring Path...\n");
+  setenv("PATH",old_path,1);
+  shell_getpath();
   return 0;
 }
 
@@ -121,6 +119,18 @@ int execute_input(char **arguments){
   if((strcmp(arguments[0],"cd") == 0))
   {
     shell_cd(arguments);
+    return 1;
+  }
+
+  if((strcmp(arguments[0],"getpath") == 0))
+  {
+    shell_getpath();
+    return 1;
+  }
+
+  if((strcmp(arguments[0],"setpath") == 0))
+  {
+    shell_setpath(arguments);
     return 1;
   }
 
