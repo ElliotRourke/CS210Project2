@@ -132,6 +132,11 @@ int execute_input(char **arguments){
     return shell_setpath(arguments);
   }
 
+  if((strcmp(arguments[0],"help") == 0))
+  {
+    return shell_help();
+  }
+
   return create_process(arguments);
 }
 

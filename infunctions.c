@@ -40,3 +40,15 @@ int shell_setpath(char **arguments)
   }
   return 1;
 }
+
+int shell_help()
+{
+  printf("|| General Help List || \n \n");
+  printf("cd : Changed directory , cd <directory> , can chain changes i.e cd <directory/directory/directory, can return to previous directory cd .. as argument.\n");
+  printf("ls : Lists the elements in the current directory. \n");
+  printf("pwd : Prints the current working directory.\n");
+  printf("getpath : Prints the current value of PATH. \n");
+  printf("setpath : Allows the user to change the value of PATH by entering 'setpath <PATH STRING>'.\n");
+  printf("\n");
+  return 1;
+}
