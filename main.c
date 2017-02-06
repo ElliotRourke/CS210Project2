@@ -15,6 +15,10 @@ char *read_input();
 char **parse_input(char *input);
 int execute_input(char **arguments);
 int create_process(char **arguments);
+int shell_cd(char **arguments);
+int shell_help();
+int shell_getpath();
+int shell_setpath(char **arguments);
 
 //This is a simple OS shell designed by our team!
 int main(int argc, char const *argv[])
@@ -168,3 +172,23 @@ int create_process(char **arguments)
   }
   return 1;
 }
+int shell_cd(char **arguments){
+	chdir(arguments[1]);
+	return 1;
+}
+int shell_getpath(){
+	char buf[1024];
+	char *path = getcwd(buf,sizeof(buf));
+	printf("current path is %s\n",path);
+	return 1;
+	
+}
+int shell_help(){
+	printf("help is here\n");
+	return 0;
+}
+int shell_setpath(char **arguments){
+	printf("only inputing text so this complies!!\n");
+	return 0;
+}
+
