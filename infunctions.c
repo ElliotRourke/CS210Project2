@@ -19,10 +19,15 @@ int shell_cd(char **arguments)
   return 1;
 }
 
-int shell_getpath()
+int shell_getpath(char **arguments)
 {
-  const char * current_path = getenv("PATH");
-  printf("%s\n",current_path);
+  if(arguments[1] == NULL){
+    const char * current_path = getenv("PATH");
+    printf("%s\n",current_path);
+  }
+  else{
+    fprintf(stderr, "ERROR: No arguments expected.\n");
+  }
   return 1;
 }
 
@@ -37,7 +42,7 @@ int shell_setpath(char **arguments)
   }else{
     setenv("PATH",alt_path,1);
     printf("NEW PATH SET : \n");
-    shell_getpath();
+    shell_getpath(arguments);
   }
   return 1;
 }

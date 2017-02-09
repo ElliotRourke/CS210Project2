@@ -149,7 +149,7 @@ int execute_input(char **arguments){
 
   if((strcmp(arguments[0],"getpath") == 0))
   {
-    return shell_getpath();
+    return shell_getpath(arguments);
   }
 
   if((strcmp(arguments[0],"setpath") == 0))
