@@ -9,11 +9,11 @@ int shell_cd(char **arguments)
 {
   if(arguments[1] == NULL)
   {
-    fprintf(stderr, "ERROR: Expected argument : cd <Directory>\n");
+    chdir(getenv("HOME"));
   }else{
     if (chdir(arguments[1]) != 0)
     {
-        perror("Shell");
+        fprintf(stderr, "ERROR: Expected argument : cd <Directory>\n");
     }
   }
   return 1;

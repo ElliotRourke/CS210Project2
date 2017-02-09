@@ -69,11 +69,20 @@ void command_loop()
 char *read_input()
 {
   ssize_t buffer_size = STRINGSIZE;
-  char * line = NULL;
+  char *line;
+  char *input = malloc(buffer_size * sizeof(char*));
+
+  if(!input)
+  {
+    fprintf(stderr, "Shell : Error allocating memory.\n");
+    exit(EXIT_FAILURE);
+  }
+
+  line  = fgets(input, buffer_size,stdin);
 
 
 
-  return line;
+  return input;
 }
 
 //Parses user input
