@@ -55,12 +55,14 @@ void command_loop()
 }
 
 //Reads in user input
+//TODO - USE FGETS
 char *read_input()
 {
   ssize_t buffer_size = STRINGSIZE;
   char * line = NULL;
 
-  getline(&line,&buffer_size,stdin);
+
+
   return line;
 }
 
@@ -169,4 +171,3 @@ int create_process(char **arguments)
   }
   return 1;
 }
-
