@@ -35,13 +35,14 @@ int shell_setpath(char **arguments)
 {
   const char * alt_path = arguments[1];
 
-  if(arguments[1] == NULL)
+  if(alt_path == NULL || strcmp(alt_path,"/") == 0)
   {
     fprintf(stderr, "Missing required arguments : setpath <PATH>\n");
     return 1;
   }else{
     setenv("PATH",alt_path,1);
     printf("NEW PATH SET : \n");
+    arguments[1] = '\0';
     shell_getpath(arguments);
   }
   return 1;
