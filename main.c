@@ -1,3 +1,13 @@
+//TODO
+// MAKE GETTING USER INPUT USE FGETS
+//MAKE SURE WHEN "cd" is used alone it takes you to /HOME/
+// IMPROVE ERROR MESSAGES
+// CD (Should try to check which file the user wanted)
+//SETPATH (Should say for "/ /" - "Only one parameter entered"),
+//GETPATH(Should say "does not take parameters")
+
+
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
