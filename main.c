@@ -51,7 +51,10 @@ void command_loop()
     //Prompt
     printf("%s$ ",  getcwd(buf,sizeof(buf)));
     //Read
-    input = read_input();
+    if((input = read_input()) == NULL)
+    {
+      break;
+    }
     //Parse
     arguments = parse_input(input);
     //Execute
@@ -59,7 +62,6 @@ void command_loop()
 
     free(input);
     free(arguments);
-
   }while (status);
 
 }
@@ -70,19 +72,17 @@ char *read_input()
 {
   ssize_t buffer_size = STRINGSIZE;
   char *line;
-  char *input = malloc(buffer_size * sizeof(char*));
+  char *buffer = malloc(buffer_size * sizeof(char*));
+  int check;
 
-  if(!input)
+  if(!buffer)
   {
     fprintf(stderr, "Shell : Error allocating memory.\n");
     exit(EXIT_FAILURE);
   }
+  line = fgets(buffer, buffer_size,stdin);
 
-  line  = fgets(input, buffer_size,stdin);
-
-
-
-  return input;
+  return line;
 }
 
 //Parses user input
@@ -102,7 +102,8 @@ char **parse_input(char *input)
   }
   token = strtok(input,delimiters);
 
-  while( token != NULL){
+  while( token != NULL)
+  {
       tokens[index] = token;
       index++;
 
@@ -135,7 +136,7 @@ int execute_input(char **arguments){
     return 1;
   }
 
-  if((strcmp(arguments[0],"exit") == 0) || (**arguments == 120))
+  if((strcmp(arguments[0],"exit") == 0))
   {
     printf("\n");
     return 0;
