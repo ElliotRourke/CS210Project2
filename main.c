@@ -34,7 +34,6 @@ int main(int argc, char const *argv[])
   command_loop();
   printf("Restoring Path...\n");
   setenv("PATH",old_path,1);
-  shell_getpath();
   return 0;
 }
 
