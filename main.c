@@ -2,7 +2,7 @@
 // MAKE GETTING USER INPUT USE FGETS
 // IMPROVE ERROR MESSAGES
 // CD (Should try to check which file the user wanted)
-// Setpath still not finished what if we put setpath ////// 
+// Setpath still not finished what if we put setpath //////
 
 
 
@@ -158,7 +158,7 @@ int execute_input(char **arguments){
 
   if((strcmp(arguments[0],"help") == 0))
   {
-    return shell_help();
+    return shell_help(arguments);
   }
 
   return create_process(arguments);

@@ -54,14 +54,20 @@ int shell_history()
   return 1;
 }
 
-int shell_help()
+int shell_help(char **arguments)
 {
-  printf("|| General Help List || \n \n");
-  printf("cd : Changed directory , cd <directory> , can chain changes i.e cd <directory/directory/directory, can return to previous directory cd .. as argument.\n");
-  printf("ls : Lists the elements in the current directory. \n");
-  printf("pwd : Prints the current working directory.\n");
-  printf("getpath : Prints the current value of PATH. \n");
-  printf("setpath : Allows the user to change the value of PATH by entering 'setpath <PATH STRING>'.\n");
-  printf("\n");
+  if(arguments[1] == NULL){
+    printf("|| General Help List || \n \n");
+    printf("cd : Changed directory , cd <directory> , can chain changes i.e cd <directory/directory/directory, can return to previous directory cd .. as argument.\n");
+    printf("ls : Lists the elements in the current directory. \n");
+    printf("pwd : Prints the current working directory.\n");
+    printf("getpath : Prints the current value of PATH. \n");
+    printf("setpath : Allows the user to change the value of PATH by entering 'setpath <PATH STRING>'.\n");
+    printf("\n");
+  }
+  else{
+    fprintf(stderr, "Error: No arguments expected\n");
+  }
+
   return 1;
 }
