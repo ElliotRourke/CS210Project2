@@ -17,6 +17,8 @@
 #define STRINGSIZE 50
 
 /* Define functions */
+
+
 void command_loop();
 char *read_input();
 char **parse_input(char *input);

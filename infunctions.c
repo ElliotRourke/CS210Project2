@@ -13,7 +13,7 @@ int shell_cd(char **arguments)
   }else{
     if (chdir(arguments[1]) != 0)
     {
-        fprintf(stderr, "ERROR: Expected argument : cd <Directory>\n");
+        fprintf(stderr, "ERROR: No directory of name %s\n", arguments[1]);
     }
   }
   return 1;
@@ -35,7 +35,7 @@ int shell_setpath(char **arguments)
 {
   const char * alt_path = arguments[1];
 
-  if(alt_path == NULL || strcmp(alt_path,"/") == 0)
+  if(alt_path == NULL || strcmp(alt_path,"/") == 0 || strcmp(alt_path,"/ we") == 0 )
   {
     fprintf(stderr, "Missing required arguments : setpath <PATH>\n");
     return 1;
