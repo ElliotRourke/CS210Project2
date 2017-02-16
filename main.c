@@ -1,5 +1,4 @@
 //TODO
-// MAKE GETTING USER INPUT USE FGETS
 // IMPROVE ERROR MESSAGES
 // CD (Should try to check which file the user wanted)
 
@@ -62,8 +61,6 @@ void command_loop()
 
 }
 
-//Reads in user input
-//TODO - USE FGETS
 char *read_input()
 {
   ssize_t buffer_size = STRINGSIZE;
