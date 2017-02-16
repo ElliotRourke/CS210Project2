@@ -15,20 +15,24 @@
 
 /* Define constants */
 #define STRINGSIZE 50
+#define MAX_HISTORY_SIZE 20
 
 /* Define functions */
-
-
 void command_loop();
 char *read_input();
 char **parse_input(char *input);
 int execute_input(char **arguments);
+void add_to_history(char *input);
+int shell_history();
 int create_process(char **arguments);
 
+char *history_array[MAX_HISTORY_SIZE];
+int history_index = 0;
 
 //This is a simple OS shell designed by our team!
 int main(int argc, char const *argv[])
 {
+  history_array[MAX_HISTORY_SIZE] = malloc(MAX_HISTORY_SIZE * sizeof(char*));
   const char *old_path = getenv("PATH");
   chdir(getenv("HOME"));
   command_loop();
@@ -42,17 +46,19 @@ void command_loop()
 {
   int status;
   char *input;
+  char *item;
   char **arguments;
   char buf[1024];
 
   do{
     //Prompt
-    printf("%s$ ",  getcwd(buf,sizeof(buf)));
+    printf("%s$ ", getcwd(buf,sizeof(buf)));
     //Read
     if((input = read_input()) == NULL)
     {
       break;
     }
+    add_to_history(input);
     //Parse
     arguments = parse_input(input);
     //Execute
@@ -64,10 +70,15 @@ void command_loop()
 
 }
 
+
+//TODO
+//NEED TO FIX THIS MORE NEARLY THERE!!!
+// To do with copying the buffer
 char *read_input()
 {
   ssize_t buffer_size = STRINGSIZE;
   char *line;
+  char *cmd = malloc(buffer_size * sizeof(char*));
   char *buffer = malloc(buffer_size * sizeof(char*));
   int check;
 
@@ -77,7 +88,7 @@ char *read_input()
     exit(EXIT_FAILURE);
   }
   line = fgets(buffer, buffer_size,stdin);
-
+  strcpy(cmd,buffer);
   return line;
 }
 
@@ -128,7 +139,7 @@ int execute_input(char **arguments){
 
   if((strcmp(arguments[0],"history") == 0))
   {
-    printf("IS HARD!\n");
+    shell_history();
     return 1;
   }
 
@@ -159,6 +170,29 @@ int execute_input(char **arguments){
   }
 
   return create_process(arguments);
+}
+
+void add_to_history(char *input)
+{
+  history_array[history_index%MAX_HISTORY_SIZE] = input;
+  history_index++;
+}
+
+int shell_history()
+{
+  int i = history_index;
+  int hist_num = 1;
+
+  do{
+      if(history_array[i])
+      {
+        printf("%4d %s\n", hist_num, history_array[i]);
+        hist_num++;
+      }
+      i = (i + 1) % MAX_HISTORY_SIZE;
+  }while( i != history_index);
+
+  return 1;
 }
 
 int create_process(char **arguments)

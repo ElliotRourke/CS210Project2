@@ -4,7 +4,6 @@
 #include <string.h>
 #include "infunctions.h"
 
-/* Define functions*/
 int shell_cd(char **arguments)
 {
   if(arguments[1] == NULL)
@@ -45,12 +44,6 @@ int shell_setpath(char **arguments)
     arguments[1] = '\0';
     shell_getpath(arguments);
   }
-  return 1;
-}
-
-int shell_history()
-{
-
   return 1;
 }
 
