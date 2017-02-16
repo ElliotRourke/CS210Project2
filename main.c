@@ -1,6 +1,7 @@
 //TODO
 // IMPROVE ERROR MESSAGES
 // CD (Should try to check which file the user wanted)
+// Setpath still not finished what if we put setpath //////
 
 
 
@@ -16,6 +17,8 @@
 #define STRINGSIZE 50
 
 /* Define functions */
+
+
 void command_loop();
 char *read_input();
 char **parse_input(char *input);
@@ -152,7 +155,7 @@ int execute_input(char **arguments){
 
   if((strcmp(arguments[0],"help") == 0))
   {
-    return shell_help();
+    return shell_help(arguments);
   }
 
   return create_process(arguments);
