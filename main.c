@@ -58,7 +58,6 @@ void command_loop()
     {
       break;
     }
-    add_to_history(input);
     //Parse
     arguments = parse_input(input);
     //Execute
@@ -70,10 +69,6 @@ void command_loop()
 
 }
 
-
-//TODO
-//NEED TO FIX THIS MORE NEARLY THERE!!!
-// To do with copying the buffer
 char *read_input()
 {
   ssize_t buffer_size = STRINGSIZE;
@@ -89,6 +84,7 @@ char *read_input()
   }
   line = fgets(buffer, buffer_size,stdin);
   strcpy(cmd,buffer);
+  add_to_history(cmd);
   return line;
 }
 
