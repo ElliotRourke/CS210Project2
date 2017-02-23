@@ -2,6 +2,7 @@
 // IMPROVE ERROR MESSAGES
 // CD (Should try to check which file the user wanted)
 // Setpath still not finished what if we put setpath //////
+//FIX HISTORY OUTPUT PRINT...
 
 
 
