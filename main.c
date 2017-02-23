@@ -174,19 +174,25 @@ void add_to_history(char *input)
   history_index++;
 }
 
+//TODO
+//THIS METHOD **WORKS**
+//The print is just weird because it overrides the pervious items in the array
+//Whilst leaving the other old items...
 int shell_history()
 {
-  int i = history_index;
+  int i = 0;
   int hist_num = 1;
 
-  do{
-      if(history_array[i])
-      {
-        printf("%4d %s\n", hist_num, history_array[i]);
-        hist_num++;
-      }
-      i = (i + 1) % MAX_HISTORY_SIZE;
-  }while( i != history_index);
+  do
+  {
+    if(history_array[i])
+    {
+      printf("%d %s\n",hist_num,history_array[i]);
+      hist_num++;
+    }
+    i = (i + 1) % MAX_HISTORY_SIZE;
+
+  }while(i != 0);
 
   return 1;
 }
