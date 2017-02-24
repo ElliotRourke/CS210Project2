@@ -2,7 +2,8 @@
 // IMPROVE ERROR MESSAGES
 // CD (Should try to check which file the user wanted)
 // Setpath still not finished what if we put setpath //////
-//FIX HISTORY OUTPUT PRINT...
+//HISTORY! Now requires some of the commands to be added to the command execution,
+//function to retrieve/ execute past commands...May consider just making a new function...
 
 
 
@@ -175,10 +176,6 @@ void add_to_history(char *input)
   history_index++;
 }
 
-//TODO
-//THIS METHOD **WORKS**
-//The print is just weird because it overrides the pervious items in the array
-//Whilst leaving the other old items...
 int shell_history()
 {
   int i,j,k;
@@ -200,7 +197,7 @@ int shell_history()
       k++;
     }
   }
-  
+
   return 1;
 }
 
