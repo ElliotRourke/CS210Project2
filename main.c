@@ -181,20 +181,26 @@ void add_to_history(char *input)
 //Whilst leaving the other old items...
 int shell_history()
 {
-  int i = 0;
-  int hist_num = 1;
+  int i,j,k;
+  char *temp[MAX_HISTORY_SIZE] = {'\0'};
 
-  do
+  k = history_index;
+  for(i = 0; i < MAX_HISTORY_SIZE; i++)
   {
-    if(history_array[i])
+    temp[i] = history_array[k%MAX_HISTORY_SIZE];
+    k++;
+  }
+
+  k = 1;
+  for(j = 0; j < MAX_HISTORY_SIZE; j++)
+  {
+    if(temp[j])
     {
-      printf("%d %s\n",hist_num,history_array[i]);
-      hist_num++;
+      printf("%d %s\n",k,temp[j]);
+      k++;
     }
-    i = (i + 1) % MAX_HISTORY_SIZE;
-
-  }while(i != 0);
-
+  }
+  
   return 1;
 }
 
