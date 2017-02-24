@@ -86,8 +86,15 @@ char *read_input()
   }
   line = fgets(buffer, buffer_size,stdin);
   strcpy(cmd,buffer);
-  add_to_history(cmd);
+  if(strcspn(cmd,"!") == 0)
+  {
+    return line;
+  }else
+  {
+    add_to_history(cmd);
+  }
   return line;
+
 }
 
 //Parses user input
@@ -133,6 +140,11 @@ int execute_input(char **arguments){
   if(arguments[0] == NULL)
   {
     return 1;
+  }
+
+  if((strcmp(arguments[0],"!!") == 0))
+  {
+    arguments = parse_input(history_array[history_index-1%MAX_HISTORY_SIZE]);
   }
 
   if((strcmp(arguments[0],"history") == 0))
