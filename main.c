@@ -40,7 +40,6 @@ struct HISTORY
 //This is a simple OS shell designed by our team!
 int main(int argc, char const *argv[])
 {
-
   const char *old_path = getenv("PATH");
   chdir(getenv("HOME"));
   command_loop();
@@ -223,18 +222,15 @@ int shell_history()
   return 1;
 }
 
-//TODO
 char **shell_past_command(char **arguments)
 {
-  /*
-  if(history_array[history_index-1%MAX_HISTORY_SIZE] == NULL)
+  if(history_array[history_index-1].cmd == NULL)
   {
     fprintf(stderr, "ERROR: No elements in history.\n");
   }else
   {
-    arguments = parse_input(history_array[history_index-1%MAX_HISTORY_SIZE]);
+    arguments = parse_input(history_array[history_index-1].cmd);
   }
-  */
 
   return arguments;
 }
