@@ -1,9 +1,7 @@
 //TODO
 // IMPROVE ERROR MESSAGES
 // CD (Should try to check which file the user wanted)
-// Setpath still not finished what if we put setpath //////
-//HISTORY! Now requires some of the commands to be added to the command execution,
-//function to retrieve/ execute past commands...May consider just making a new function...
+// ADD EXTRA INSTRUCTIONS TO COMMANDS FROM THE PAST!
 
 
 
@@ -17,7 +15,7 @@
 
 /* Define constants */
 #define STRINGSIZE 50
-#define MAX_HISTORY_SIZE 20
+#define MAX_HISTORY_SIZE 5
 
 /* Define functions */
 void command_loop();
@@ -26,15 +24,23 @@ char **parse_input(char *input);
 int execute_input(char **arguments);
 void add_to_history(char *input);
 int shell_history();
+char **shell_past_command(char **arguments);
 int create_process(char **arguments);
 
-char *history_array[MAX_HISTORY_SIZE];
 int history_index = 0;
+int counter = 1;
+
+struct HISTORY
+{
+  int command_id;
+  char *cmd;
+}history_array[MAX_HISTORY_SIZE];
+
 
 //This is a simple OS shell designed by our team!
 int main(int argc, char const *argv[])
 {
-  history_array[MAX_HISTORY_SIZE] = malloc(MAX_HISTORY_SIZE * sizeof(char*));
+
   const char *old_path = getenv("PATH");
   chdir(getenv("HOME"));
   command_loop();
@@ -142,9 +148,10 @@ int execute_input(char **arguments){
     return 1;
   }
 
+  //TODO
   if((strcmp(arguments[0],"!!") == 0))
   {
-    arguments = parse_input(history_array[history_index-1%MAX_HISTORY_SIZE]);
+    arguments = shell_past_command(arguments);
   }
 
   if((strcmp(arguments[0],"history") == 0))
@@ -184,33 +191,52 @@ int execute_input(char **arguments){
 
 void add_to_history(char *input)
 {
-  history_array[history_index%MAX_HISTORY_SIZE] = input;
-  history_index++;
+  if(history_array[history_index].cmd != NULL){
+    free(history_array[history_index].cmd);
+  }
+
+  history_array[history_index].cmd = strdup(input);
+  history_array[history_index].command_id = counter;
+  history_index = (history_index + 1 ) % MAX_HISTORY_SIZE;
+  counter++;
 }
 
 int shell_history()
 {
-  int i,j,k;
-  char *temp[MAX_HISTORY_SIZE] = {'\0'};
+  int i,j;
 
-  k = history_index;
-  for(i = 0; i < MAX_HISTORY_SIZE; i++)
+  for(i = history_index; i < MAX_HISTORY_SIZE; i++)
   {
-    temp[i] = history_array[k%MAX_HISTORY_SIZE];
-    k++;
-  }
-
-  k = 1;
-  for(j = 0; j < MAX_HISTORY_SIZE; j++)
-  {
-    if(temp[j])
+    if(history_array[i].cmd)
     {
-      printf("%d %s\n",k,temp[j]);
-      k++;
+      printf("%d %s\n",history_array[i].command_id,history_array[i].cmd);
     }
   }
 
+  for(j = 0; j < history_index; j++)
+  {
+    if(history_array[j].cmd)
+    {
+      printf("%d %s\n",history_array[i].command_id,history_array[j].cmd);
+    }
+  }
   return 1;
+}
+
+//TODO
+char **shell_past_command(char **arguments)
+{
+  /*
+  if(history_array[history_index-1%MAX_HISTORY_SIZE] == NULL)
+  {
+    fprintf(stderr, "ERROR: No elements in history.\n");
+  }else
+  {
+    arguments = parse_input(history_array[history_index-1%MAX_HISTORY_SIZE]);
+  }
+  */
+
+  return arguments;
 }
 
 int create_process(char **arguments)
