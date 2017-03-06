@@ -231,7 +231,7 @@ char **shell_past_command(char **arguments)
 {
   char *temp_cmd = malloc(STRINGSIZE * sizeof(char*));
   char *temp_arg = malloc(STRINGSIZE * sizeof(char*));
-  char **temp_string = malloc(STRINGSIZE * sizeof(char*));
+
 
   if(history_array[history_index-1].cmd == NULL)
   {
@@ -239,13 +239,13 @@ char **shell_past_command(char **arguments)
     fprintf(stderr, "ERROR: No elements in history.\n");
   }else
   {
-    strcpy(temp_arg,arguments[1]);
-    printf("%s\n",temp_arg);
     strcpy(temp_cmd,history_array[history_index-1].cmd);
-    printf("%s\n",temp_cmd);
+    if(arguments[1] != NULL)
+    {
+      strcpy(temp_arg,arguments[1]);
+    }
     strcat(temp_cmd,temp_arg);
-    printf("%s\n",temp_cmd);
-
+    arguments = parse_input(temp_cmd);
   }
 
   return arguments;
