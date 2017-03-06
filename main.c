@@ -247,9 +247,12 @@ char **shell_past_command(char **arguments)
       strcat(temp_cmd,temp_arg);
       arguments = parse_input(temp_cmd);
     }
-
     return arguments;
   }
+
+  arguments[0] = NULL;
+  fprintf(stderr, "ERROR: Not valid history function.\n");
+  return arguments;
 }
 
 int create_process(char **arguments)
