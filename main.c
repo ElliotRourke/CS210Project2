@@ -147,8 +147,7 @@ int execute_input(char **arguments){
     return 1;
   }
 
-  //TODO
-  if((strcmp(arguments[0],"!!") == 0))
+  if(strcspn(arguments[0],"!") == 0)
   {
     arguments = shell_past_command(arguments);
     if(arguments[0] == NULL)
@@ -232,23 +231,25 @@ char **shell_past_command(char **arguments)
   char *temp_cmd = malloc(STRINGSIZE * sizeof(char*));
   char *temp_arg = malloc(STRINGSIZE * sizeof(char*));
 
-
-  if(history_array[history_index-1].cmd == NULL)
+  if(strcmp(arguments[0],"!!") == 0)
   {
-    arguments[0] = NULL;
-    fprintf(stderr, "ERROR: No elements in history.\n");
-  }else
-  {
-    strcpy(temp_cmd,history_array[history_index-1].cmd);
-    if(arguments[1] != NULL)
+    if(history_array[history_index-1].cmd == NULL)
     {
-      strcpy(temp_arg,arguments[1]);
+      arguments[0] = NULL;
+      fprintf(stderr, "ERROR: No elements in history.\n");
+    }else
+    {
+      strcpy(temp_cmd,history_array[history_index-1].cmd);
+      if(arguments[1] != NULL)
+      {
+        strcpy(temp_arg,arguments[1]);
+      }
+      strcat(temp_cmd,temp_arg);
+      arguments = parse_input(temp_cmd);
     }
-    strcat(temp_cmd,temp_arg);
-    arguments = parse_input(temp_cmd);
-  }
 
-  return arguments;
+    return arguments;
+  }
 }
 
 int create_process(char **arguments)
