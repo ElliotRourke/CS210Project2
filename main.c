@@ -26,6 +26,7 @@ int execute_input(char **arguments);
 void add_to_history(char *input);
 int shell_history();
 char **shell_past_command(char **arguments);
+int char_to_int(char * temp);
 int create_process(char **arguments);
 
 int history_index = 0;
@@ -253,13 +254,46 @@ char **shell_past_command(char **arguments)
 
   if((strcmp(arguments[0],"!") == 0))
   {
-      printf("POTATO\n");
+      int a = 0;
+      a = char_to_int(arguments[1]);
+      if((a <= 0) || (a > 20))
+      {
+        arguments[0] = NULL;
+        fprintf(stderr, "ERROR: Not valid history function. Command IDs start a numeral 1.\n");
+        return arguments;
+      }
       return arguments;
   }
 
   arguments[0] = NULL;
   fprintf(stderr, "ERROR: Not valid history function.\n");
   return arguments;
+}
+
+int char_to_int(char * temp){
+  int x = 0;
+  int y = 0;
+  int z = 0;
+  int i;
+  char c[2];
+
+  if(temp == NULL){
+    return z;
+  }
+  strcpy(c,temp);
+
+  if((isdigit(c[0])) && (c[1] == '\0')){
+      x = c[0] - '0';
+      return x;
+    }else if((isdigit(c[0])) && (isdigit(c[1]))){
+      x = c[0] - '0';
+      x  = x * 10;
+      y = c[1] - '0';
+      z = x + y;
+      return z;
+    }else{
+      return z;
+    }
 }
 
 int create_process(char **arguments)
