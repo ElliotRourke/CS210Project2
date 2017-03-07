@@ -2,7 +2,7 @@
 // IMPROVE ERROR MESSAGES
 // CD (Should try to check which file the user wanted)
 // ADD EXTRA INSTRUCTIONS TO COMMANDS FROM THE PAST!
-
+// STRANGE INTERACTION WITH DISPLAYING COMMAND ID IN TERMINAL CHECK IT
 
 
 #include <stdio.h>
@@ -16,7 +16,7 @@
 
 /* Define constants */
 #define STRINGSIZE 50
-#define MAX_HISTORY_SIZE 5
+#define MAX_HISTORY_SIZE 20
 
 /* Define functions */
 void command_loop();
@@ -96,8 +96,6 @@ char *read_input(){
   return line;
 }
 
-//Parses user input
-// Personal note ( This function is a pointer that points to pointers)
 char **parse_input(char *input){
   int buffer_size = STRINGSIZE + 1;
   int index = 0;
@@ -182,6 +180,8 @@ void add_to_history(char *input){
   counter++;
 }
 
+//TODO strange interaction with history functions counter in terminal.
+//Command ID's are correct and get correct commands but display is wrong.
 int shell_history(){
   int i,j;
 
@@ -199,10 +199,9 @@ int shell_history(){
   return 1;
 }
 
-
 char **shell_past_command(char **arguments){
   int a = 0;
-  int i;
+  int i,j;
   char *temp_cmd = malloc(STRINGSIZE * sizeof(char*));
   char *temp_arg = malloc(STRINGSIZE * sizeof(char*));
 
@@ -211,28 +210,61 @@ char **shell_past_command(char **arguments){
       arguments[0] = NULL;
       fprintf(stderr, "ERROR: No elements in history.\n");
     }else{
-      strcpy(temp_cmd,history_array[history_index-1].cmd);
-      if(arguments[1] != NULL){
-        strcpy(temp_arg,arguments[1]);
+      if(arguments[1] == NULL){
+        strcpy(temp_cmd,history_array[history_index-1].cmd);
+        arguments = parse_input(temp_cmd);
+      }else{
+          i = 0;
+          do{
+            strcpy(temp_cmd,history_array[history_index-1].cmd);
+            if(arguments[i] != NULL){
+              strcpy(temp_arg,arguments[i]);
+            }
+            strcat(temp_cmd," ");
+            strcat(temp_cmd,temp_arg);
+            i++;
+          }while(arguments[i] != NULL);
+          arguments = parse_input(temp_cmd);
+        }
       }
-      strcat(temp_cmd,temp_arg);
-      arguments = parse_input(temp_cmd);
-    }
     return arguments;
   }
 
   if((strcmp(arguments[0],"!") == 0)){
-      a = char_to_int(arguments[1]);
-      if((a <= 0) || (a > 20)){
-        arguments[0] = NULL;
-        fprintf(stderr, "ERROR: Not valid history function. Command IDs start a numeral 1.\n");
-        return arguments;
-      }
-
-      for(i = 0; i < MAX_HISTORY_SIZE; i ++){
-
-      }
+    a = char_to_int(arguments[1]);
+    if((a <= 0) || (a > 20)){
+      arguments[0] = NULL;
+      fprintf(stderr, "ERROR: Not valid history function. Command IDs start a numeral 1.\n");
       return arguments;
+    }
+
+    for(i = 0; i < MAX_HISTORY_SIZE; i ++){
+      if(history_array[i].command_id == a){
+        strcpy(temp_cmd,history_array[i].cmd);
+        printf("%s\n",temp_cmd);
+        if(arguments[2] != NULL){
+          j = 0;
+          do{
+            strcpy(temp_cmd,history_array[history_index-1].cmd);
+            if(arguments[j] != NULL){
+              strcpy(temp_arg,arguments[j]);
+            }
+            strcat(temp_cmd," ");
+            strcat(temp_cmd,temp_arg);
+            j++;
+          }while(arguments[j] != NULL);
+          arguments = parse_input(temp_cmd);
+          return arguments;
+        }else{
+          arguments = parse_input(temp_cmd);
+          return arguments;
+        }
+      }
+    }
+  }
+
+  if((strcmp(arguments[0],"!-") == 0)){
+    
   }
 
   arguments[0] = NULL;

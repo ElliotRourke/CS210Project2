@@ -48,7 +48,7 @@ int char_to_int(char * temp){
   int i;
   char c[2];
 
-  if(temp == NULL){
+  if((temp == NULL) || (strlen(temp) > 2)){
     return z;
   }
   strcpy(c,temp);
