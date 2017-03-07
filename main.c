@@ -272,23 +272,22 @@ char **shell_past_command(char **arguments){
       return arguments;
     }
     c = b - a;
-    if(c < 1){
+    if(c <= 0){
       arguments[0] = NULL;
       fprintf(stderr, "ERROR: Not valid history function. Command ID specified is less than 1.\n");
       return arguments;
     }
-    strcpy(temp_cmd,history_array[c].cmd);
+    strcpy(temp_cmd,history_array[history_index-c].cmd);
     if(arguments[2] != NULL){
-      j = 0;
+      i = 2;
       do{
-        strcpy(temp_cmd,history_array[c].cmd);
-        if(arguments[j] != NULL){
-          strcpy(temp_arg,arguments[j]);
+        if(arguments[i] != NULL){
+          strcpy(temp_arg,arguments[i]);
         }
         strcat(temp_cmd," ");
         strcat(temp_cmd,temp_arg);
-        j++;
-      }while(arguments[j] != NULL);
+        i++;
+      }while(arguments[i] != NULL);
       arguments = parse_input(temp_cmd);
       return arguments;
     }else{
