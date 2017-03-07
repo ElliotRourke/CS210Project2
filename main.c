@@ -11,6 +11,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <ctype.h>
 #include "infunctions.h"
 
 /* Define constants */
@@ -248,6 +249,12 @@ char **shell_past_command(char **arguments)
       arguments = parse_input(temp_cmd);
     }
     return arguments;
+  }
+
+  if((strcmp(arguments[0],"!") == 0))
+  {
+      printf("POTATO\n");
+      return arguments;
   }
 
   arguments[0] = NULL;
