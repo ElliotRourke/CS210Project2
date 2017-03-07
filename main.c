@@ -26,22 +26,19 @@ int execute_input(char **arguments);
 void add_to_history(char *input);
 int shell_history();
 char **shell_past_command(char **arguments);
-int char_to_int(char * temp);
 int create_process(char **arguments);
 
 int history_index = 0;
 int counter = 1;
 
-struct HISTORY
-{
+struct HISTORY{
   int command_id;
   char *cmd;
 }history_array[MAX_HISTORY_SIZE];
 
 
 //This is a simple OS shell designed by our team!
-int main(int argc, char const *argv[])
-{
+int main(int argc, char const *argv[]){
   const char *old_path = getenv("PATH");
   chdir(getenv("HOME"));
   command_loop();
@@ -51,8 +48,7 @@ int main(int argc, char const *argv[])
 }
 
 //Handles commands input by user
-void command_loop()
-{
+void command_loop(){
   int status;
   char *input;
   char *item;
@@ -63,74 +59,65 @@ void command_loop()
     //Prompt
     printf("%s$ ", getcwd(buf,sizeof(buf)));
     //Read
-    if((input = read_input()) == NULL)
-    {
+    if((input = read_input()) == NULL){
       break;
     }
     //Parse
     arguments = parse_input(input);
     //Execute
     status = execute_input(arguments);
-
     free(input);
     free(arguments);
   }while (status);
 
 }
 
-char *read_input()
-{
+char *read_input(){
   ssize_t buffer_size = STRINGSIZE;
   char *line;
   char *cmd = malloc(buffer_size * sizeof(char*));
   char *buffer = malloc(buffer_size * sizeof(char*));
   int check;
 
-  if(!buffer)
-  {
+  if(!buffer){
     fprintf(stderr, "Shell : Error allocating memory.\n");
     exit(EXIT_FAILURE);
   }
   line = fgets(buffer, buffer_size,stdin);
   strcpy(cmd,buffer);
+
   if(strcspn(cmd,"!") == 0)
   {
     return line;
-  }else
-  {
+  }else{
     add_to_history(cmd);
   }
-  return line;
 
+  return line;
 }
 
 //Parses user input
 // Personal note ( This function is a pointer that points to pointers)
-char **parse_input(char *input)
-{
+char **parse_input(char *input){
   int buffer_size = STRINGSIZE + 1;
   int index = 0;
   char delimiters[] = " \t | > < & ; \n";
   char *token;
   char **tokens = malloc(buffer_size * sizeof(char*));
 
-  if(!tokens)
-  {
+  if(!tokens){
       fprintf(stderr, "Shell: Error allocating memory.\n");
       exit(EXIT_FAILURE);
   }
   token = strtok(input,delimiters);
 
-  while( token != NULL)
-  {
+  while( token != NULL){
       tokens[index] = token;
       index++;
 
-      if(buffer_size >= index)
-      {
+      if(buffer_size >= index){
         tokens = realloc(tokens,buffer_size * sizeof(char*));
-        if(!tokens)
-        {
+        if(!tokens){
             fprintf(stderr, "Shell: Error allocating memory.\n");
             exit(EXIT_FAILURE);
         }
@@ -144,57 +131,47 @@ char **parse_input(char *input)
 
 int execute_input(char **arguments){
 
-  if(arguments[0] == NULL)
-  {
+  if(arguments[0] == NULL){
     return 1;
   }
 
-  if(strcspn(arguments[0],"!") == 0)
-  {
+  if(strcspn(arguments[0],"!") == 0){
     arguments = shell_past_command(arguments);
-    if(arguments[0] == NULL)
-    {
+    if(arguments[0] == NULL){
       return 1;
     }
   }
 
-  if((strcmp(arguments[0],"history") == 0))
-  {
+  if((strcmp(arguments[0],"history") == 0)){
     shell_history();
     return 1;
   }
 
-  if((strcmp(arguments[0],"exit") == 0))
-  {
+  if((strcmp(arguments[0],"exit") == 0)){
     printf("\n");
     return 0;
   }
 
-  if((strcmp(arguments[0],"cd") == 0))
-  {
+  if((strcmp(arguments[0],"cd") == 0)){
     return shell_cd(arguments);
   }
 
-  if((strcmp(arguments[0],"getpath") == 0))
-  {
+  if((strcmp(arguments[0],"getpath") == 0)){
     return shell_getpath(arguments);
   }
 
-  if((strcmp(arguments[0],"setpath") == 0))
-  {
+  if((strcmp(arguments[0],"setpath") == 0)){
     return shell_setpath(arguments);
   }
 
-  if((strcmp(arguments[0],"help") == 0))
-  {
+  if((strcmp(arguments[0],"help") == 0)){
     return shell_help(arguments);
   }
 
   return create_process(arguments);
 }
 
-void add_to_history(char *input)
-{
+void add_to_history(char *input){
   if(history_array[history_index].cmd != NULL){
     free(history_array[history_index].cmd);
   }
@@ -205,22 +182,17 @@ void add_to_history(char *input)
   counter++;
 }
 
-int shell_history()
-{
+int shell_history(){
   int i,j;
 
-  for(i = history_index; i < MAX_HISTORY_SIZE; i++)
-  {
-    if(history_array[i].cmd)
-    {
+  for(i = history_index; i < MAX_HISTORY_SIZE; i++){
+    if(history_array[i].cmd){
       printf("%d %s\n",history_array[i].command_id,history_array[i].cmd);
     }
   }
 
-  for(j = 0; j < history_index; j++)
-  {
-    if(history_array[j].cmd)
-    {
+  for(j = 0; j < history_index; j++){
+    if(history_array[j].cmd){
       printf("%d %s\n",history_array[i].command_id,history_array[j].cmd);
     }
   }
@@ -228,22 +200,19 @@ int shell_history()
 }
 
 
-char **shell_past_command(char **arguments)
-{
+char **shell_past_command(char **arguments){
+  int a = 0;
+  int i;
   char *temp_cmd = malloc(STRINGSIZE * sizeof(char*));
   char *temp_arg = malloc(STRINGSIZE * sizeof(char*));
 
-  if(strcmp(arguments[0],"!!") == 0)
-  {
-    if(history_array[history_index-1].cmd == NULL)
-    {
+  if(strcmp(arguments[0],"!!") == 0){
+    if(history_array[history_index-1].cmd == NULL){
       arguments[0] = NULL;
       fprintf(stderr, "ERROR: No elements in history.\n");
-    }else
-    {
+    }else{
       strcpy(temp_cmd,history_array[history_index-1].cmd);
-      if(arguments[1] != NULL)
-      {
+      if(arguments[1] != NULL){
         strcpy(temp_arg,arguments[1]);
       }
       strcat(temp_cmd,temp_arg);
@@ -252,15 +221,16 @@ char **shell_past_command(char **arguments)
     return arguments;
   }
 
-  if((strcmp(arguments[0],"!") == 0))
-  {
-      int a = 0;
+  if((strcmp(arguments[0],"!") == 0)){
       a = char_to_int(arguments[1]);
-      if((a <= 0) || (a > 20))
-      {
+      if((a <= 0) || (a > 20)){
         arguments[0] = NULL;
         fprintf(stderr, "ERROR: Not valid history function. Command IDs start a numeral 1.\n");
         return arguments;
+      }
+
+      for(i = 0; i < MAX_HISTORY_SIZE; i ++){
+
       }
       return arguments;
   }
@@ -270,53 +240,21 @@ char **shell_past_command(char **arguments)
   return arguments;
 }
 
-int char_to_int(char * temp){
-  int x = 0;
-  int y = 0;
-  int z = 0;
-  int i;
-  char c[2];
-
-  if(temp == NULL){
-    return z;
-  }
-  strcpy(c,temp);
-
-  if((isdigit(c[0])) && (c[1] == '\0')){
-      x = c[0] - '0';
-      return x;
-    }else if((isdigit(c[0])) && (isdigit(c[1]))){
-      x = c[0] - '0';
-      x  = x * 10;
-      y = c[1] - '0';
-      z = x + y;
-      return z;
-    }else{
-      return z;
-    }
-}
-
-int create_process(char **arguments)
-{
+int create_process(char **arguments){
   pid_t pid;
   pid = fork();
 
-  if(pid < 0)
-  {
+  if(pid < 0){
     fprintf(stderr, "Fork Failed\n");
     perror("Shell");
     exit(-1);
   }
-  else if(pid == 0)
-  {
-    if(execvp(arguments[0],arguments) == -1)
-    {
+  else if(pid == 0){
+    if(execvp(arguments[0],arguments) == -1){
       perror("Shell");
     }
     exit(EXIT_FAILURE);
-  }
-  else
-  {
+  }else{
     wait(NULL);
     return 1;
   }
