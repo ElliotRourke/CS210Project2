@@ -201,6 +201,8 @@ int shell_history(){
 
 char **shell_past_command(char **arguments){
   int a = 0;
+  int b = 0;
+  int c = 0;
   int i,j;
   char *temp_cmd = malloc(STRINGSIZE * sizeof(char*));
   char *temp_arg = malloc(STRINGSIZE * sizeof(char*));
@@ -214,9 +216,9 @@ char **shell_past_command(char **arguments){
         strcpy(temp_cmd,history_array[history_index-1].cmd);
         arguments = parse_input(temp_cmd);
       }else{
-          i = 0;
+          i = 1;
+          strcpy(temp_cmd,history_array[history_index-1].cmd);
           do{
-            strcpy(temp_cmd,history_array[history_index-1].cmd);
             if(arguments[i] != NULL){
               strcpy(temp_arg,arguments[i]);
             }
@@ -241,11 +243,9 @@ char **shell_past_command(char **arguments){
     for(i = 0; i < MAX_HISTORY_SIZE; i ++){
       if(history_array[i].command_id == a){
         strcpy(temp_cmd,history_array[i].cmd);
-        printf("%s\n",temp_cmd);
         if(arguments[2] != NULL){
-          j = 0;
+          j = 2;
           do{
-            strcpy(temp_cmd,history_array[history_index-1].cmd);
             if(arguments[j] != NULL){
               strcpy(temp_arg,arguments[j]);
             }
@@ -264,7 +264,37 @@ char **shell_past_command(char **arguments){
   }
 
   if((strcmp(arguments[0],"!-") == 0)){
-    
+    a = char_to_int(arguments[1]);
+    b = counter;
+    if(a < 1){
+      arguments[0] = NULL;
+      fprintf(stderr, "ERROR: Not valid history function. Command IDs start a numeral 1.\n");
+      return arguments;
+    }
+    c = b - a;
+    if(c < 1){
+      arguments[0] = NULL;
+      fprintf(stderr, "ERROR: Not valid history function. Command ID specified is less than 1.\n");
+      return arguments;
+    }
+    strcpy(temp_cmd,history_array[c].cmd);
+    if(arguments[2] != NULL){
+      j = 0;
+      do{
+        strcpy(temp_cmd,history_array[c].cmd);
+        if(arguments[j] != NULL){
+          strcpy(temp_arg,arguments[j]);
+        }
+        strcat(temp_cmd," ");
+        strcat(temp_cmd,temp_arg);
+        j++;
+      }while(arguments[j] != NULL);
+      arguments = parse_input(temp_cmd);
+      return arguments;
+    }else{
+      arguments = parse_input(temp_cmd);
+      return arguments;
+    }
   }
 
   arguments[0] = NULL;
