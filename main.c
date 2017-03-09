@@ -187,13 +187,13 @@ int shell_history(){
 
   for(i = history_index; i < MAX_HISTORY_SIZE; i++){
     if(history_array[i].cmd){
-      printf("%d %s\n",history_array[i].command_id,history_array[i].cmd);
+      printf("#%d %s\n",history_array[i].command_id,history_array[i].cmd);
     }
   }
 
   for(j = 0; j < history_index; j++){
     if(history_array[j].cmd){
-      printf("%d %s\n",history_array[i].command_id,history_array[j].cmd);
+      printf("#%d %s\n",history_array[j].command_id,history_array[j].cmd);
     }
   }
   return 1;
@@ -265,19 +265,23 @@ char **shell_past_command(char **arguments){
 
   if((strcmp(arguments[0],"!-") == 0)){
     a = char_to_int(arguments[1]);
+    printf("A VAL - %d\n",a);
     b = counter;
+    printf("B VAL - %d\n",b);
     if(a < 1){
       arguments[0] = NULL;
       fprintf(stderr, "ERROR: Not valid history function. Command IDs start a numeral 1.\n");
       return arguments;
     }
-    c = b - a;
+    c = (b - 1) - a;
+    printf("C VAL - %d\n",c);
     if(c <= 0){
       arguments[0] = NULL;
       fprintf(stderr, "ERROR: Not valid history function. Command ID specified is less than 1.\n");
       return arguments;
     }
     strcpy(temp_cmd,history_array[history_index-c].cmd);
+    printf("I VAL - %d\n",history_index-c);
     if(arguments[2] != NULL){
       i = 2;
       do{
