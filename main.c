@@ -204,8 +204,6 @@ char **shell_past_command(char **arguments){
   char *temp_cmd = malloc(STRINGSIZE * sizeof(char*));
   char *temp_arg = malloc(STRINGSIZE * sizeof(char*));
 
-  a = char_to_int(&arguments[0][2]);
-
   if(strcmp(arguments[0],"!!") == 0){
     if(history_array[history_index-1].cmd == NULL){
       arguments[0] = NULL;
@@ -231,8 +229,40 @@ char **shell_past_command(char **arguments){
     return arguments;
   }
 
-//((strcmp(&arguments[0][1],"-") == 0) && (strcmp(&arguments[0][0],"!") == 0))
-  if((strcmp(&arguments[0][1],"-") == 0) && (strcmp(&arguments[0][0],"!") == 0)){
+  if((arguments[0][0]=='!') && (arguments[0][1]!='-')){
+    a = char_to_int(&arguments[0][1]);
+    if((a <= 0) || (a > 20)){
+      arguments[0] = NULL;
+      fprintf(stderr, "ERROR: Not valid history function. Command IDs start a numeral 1.\n");
+      return arguments;
+    }
+    for(i = 0; i < MAX_HISTORY_SIZE; i ++){
+      if(history_array[i].command_id == a){
+        strcpy(temp_cmd,history_array[i].cmd);
+        if(arguments[1] != NULL){
+          j = 1;
+          do{
+            if(arguments[j] != NULL){
+              strcpy(temp_arg,arguments[j]);
+            }
+            strcat(temp_cmd," ");
+            strcat(temp_cmd,temp_arg);
+            j++;
+          }while(arguments[j] != NULL);
+          arguments = parse_input(temp_cmd);
+          return arguments;
+        }else{
+          arguments = parse_input(temp_cmd);
+          return arguments;
+        }
+      }
+    }
+  }
+
+  if((arguments[0][1]=='-') && (arguments[0][0]=='!')){
+    printf("We are here!\n");
+    a = char_to_int(&arguments[0][2]);
+    printf("%d\n",a);
     b = counter;
     if(a < 1){
       arguments[0] = NULL;
@@ -263,34 +293,8 @@ char **shell_past_command(char **arguments){
       arguments = parse_input(temp_cmd);
       return arguments;
     }
-  }else{
-    if((a <= 0) || (a > 20)){
-      arguments[0] = NULL;
-      fprintf(stderr, "ERROR: Not valid history function. Command IDs start a numeral 1.\n");
-      return arguments;
-    }
-    for(i = 0; i < MAX_HISTORY_SIZE; i ++){
-      if(history_array[i].command_id == a){
-        strcpy(temp_cmd,history_array[i].cmd);
-        if(arguments[2] != NULL){
-          j = 2;
-          do{
-            if(arguments[j] != NULL){
-              strcpy(temp_arg,arguments[j]);
-            }
-            strcat(temp_cmd," ");
-            strcat(temp_cmd,temp_arg);
-            j++;
-          }while(arguments[j] != NULL);
-          arguments = parse_input(temp_cmd);
-          return arguments;
-        }else{
-          arguments = parse_input(temp_cmd);
-          return arguments;
-        }
-      }
-    }
   }
+
   arguments[0] = NULL;
   fprintf(stderr, "ERROR: Not valid history function.\n");
   return arguments;
