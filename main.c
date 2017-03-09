@@ -204,6 +204,8 @@ char **shell_past_command(char **arguments){
   char *temp_cmd = malloc(STRINGSIZE * sizeof(char*));
   char *temp_arg = malloc(STRINGSIZE * sizeof(char*));
 
+  a = char_to_int(&arguments[0][2]);
+
   if(strcmp(arguments[0],"!!") == 0){
     if(history_array[history_index-1].cmd == NULL){
       arguments[0] = NULL;
@@ -229,14 +231,44 @@ char **shell_past_command(char **arguments){
     return arguments;
   }
 
-  if((strcmp(arguments[0],"!") == 0)){
-    a = char_to_int(arguments[1]);
+//((strcmp(&arguments[0][1],"-") == 0) && (strcmp(&arguments[0][0],"!") == 0))
+  if((strcmp(&arguments[0][1],"-") == 0) && (strcmp(&arguments[0][0],"!") == 0)){
+    b = counter;
+    if(a < 1){
+      arguments[0] = NULL;
+      fprintf(stderr, "ERROR: Not valid history function. Command IDs start a numeral 1.\n");
+      return arguments;
+    }
+    c = b - a;
+    c = c % MAX_HISTORY_SIZE;
+    if(c <= 0){
+      arguments[0] = NULL;
+      fprintf(stderr, "ERROR: Not valid history function. Command ID specified is less than 1.\n");
+      return arguments;
+    }
+    strcpy(temp_cmd,history_array[c-1].cmd);
+    if(arguments[1] != NULL){
+      i = 1;
+      do{
+        if(arguments[i] != NULL){
+          strcpy(temp_arg,arguments[i]);
+        }
+        strcat(temp_cmd," ");
+        strcat(temp_cmd,temp_arg);
+        i++;
+      }while(arguments[i] != NULL);
+      arguments = parse_input(temp_cmd);
+      return arguments;
+    }else{
+      arguments = parse_input(temp_cmd);
+      return arguments;
+    }
+  }else{
     if((a <= 0) || (a > 20)){
       arguments[0] = NULL;
       fprintf(stderr, "ERROR: Not valid history function. Command IDs start a numeral 1.\n");
       return arguments;
     }
-
     for(i = 0; i < MAX_HISTORY_SIZE; i ++){
       if(history_array[i].command_id == a){
         strcpy(temp_cmd,history_array[i].cmd);
@@ -259,41 +291,6 @@ char **shell_past_command(char **arguments){
       }
     }
   }
-
-  if((strcmp(arguments[0],"!-") == 0)){
-    a = char_to_int(arguments[1]);
-    b = counter;
-    if(a < 1){
-      arguments[0] = NULL;
-      fprintf(stderr, "ERROR: Not valid history function. Command IDs start a numeral 1.\n");
-      return arguments;
-    }
-    c = b - a;
-    c = c % MAX_HISTORY_SIZE;
-    if(c <= 0){
-      arguments[0] = NULL;
-      fprintf(stderr, "ERROR: Not valid history function. Command ID specified is less than 1.\n");
-      return arguments;
-    }
-    strcpy(temp_cmd,history_array[c-1].cmd);
-    if(arguments[2] != NULL){
-      i = 2;
-      do{
-        if(arguments[i] != NULL){
-          strcpy(temp_arg,arguments[i]);
-        }
-        strcat(temp_cmd," ");
-        strcat(temp_cmd,temp_arg);
-        i++;
-      }while(arguments[i] != NULL);
-      arguments = parse_input(temp_cmd);
-      return arguments;
-    }else{
-      arguments = parse_input(temp_cmd);
-      return arguments;
-    }
-  }
-
   arguments[0] = NULL;
   fprintf(stderr, "ERROR: Not valid history function.\n");
   return arguments;
