@@ -1,9 +1,6 @@
 //TODO
 // IMPROVE ERROR MESSAGES
 // CD (Should try to check which file the user wanted)
-// ADD EXTRA INSTRUCTIONS TO COMMANDS FROM THE PAST!
-// STRANGE INTERACTION WITH DISPLAYING COMMAND ID IN TERMINAL CHECK IT
-
 
 #include <stdio.h>
 #include <string.h>
@@ -265,23 +262,20 @@ char **shell_past_command(char **arguments){
 
   if((strcmp(arguments[0],"!-") == 0)){
     a = char_to_int(arguments[1]);
-    printf("A VAL - %d\n",a);
     b = counter;
-    printf("B VAL - %d\n",b);
     if(a < 1){
       arguments[0] = NULL;
       fprintf(stderr, "ERROR: Not valid history function. Command IDs start a numeral 1.\n");
       return arguments;
     }
-    c = (b - 1) - a;
-    printf("C VAL - %d\n",c);
+    c = b - a;
+    c = c % MAX_HISTORY_SIZE;
     if(c <= 0){
       arguments[0] = NULL;
       fprintf(stderr, "ERROR: Not valid history function. Command ID specified is less than 1.\n");
       return arguments;
     }
-    strcpy(temp_cmd,history_array[history_index-c].cmd);
-    printf("I VAL - %d\n",history_index-c);
+    strcpy(temp_cmd,history_array[c-1].cmd);
     if(arguments[2] != NULL){
       i = 2;
       do{
