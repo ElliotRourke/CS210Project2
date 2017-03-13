@@ -266,9 +266,7 @@ char **shell_past_command(char **arguments){
   }
 
   if((arguments[0][1]=='-') && (arguments[0][0]=='!')){
-    printf("We are here!\n");
     a = char_to_int(&arguments[0][2]);
-    printf("%d\n",a);
     b = counter;
     if(a < 1){
       arguments[0] = NULL;
