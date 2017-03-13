@@ -304,10 +304,12 @@ char **shell_past_command(char **arguments){
   return arguments;
 }
 
+//TODO
+//MAYBE USE FPRINTF HERE!!!
 void save_history(FILE * source){
   source = fopen("hist_list.bin", "wb");
   int i,j;
-
+  /*
   for(i = history_index; i < MAX_HISTORY_SIZE; i++){
     if(history_array[i].cmd){
       fwrite(&history_array[i], sizeof(struct HISTORY), 1, source);
@@ -319,6 +321,8 @@ void save_history(FILE * source){
       fwrite(&history_array[j], sizeof(struct HISTORY), 1, source);
     }
   }
+  */
+
   fclose (source);
 }
 
