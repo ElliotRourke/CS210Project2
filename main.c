@@ -13,7 +13,7 @@
 
 /* Define constants */
 #define STRINGSIZE 50
-#define MAX_HISTORY_SIZE 20
+#define MAX_HISTORY_SIZE 5
 
 /* Define functions */
 void command_loop();
@@ -23,6 +23,8 @@ int execute_input(char **arguments);
 void add_to_history(char *input);
 int shell_history();
 char **shell_past_command(char **arguments);
+void save_history(FILE * source);
+void load_history(FILE * source);
 int create_process(char **arguments);
 
 int history_index = 0;
@@ -36,9 +38,13 @@ struct HISTORY{
 
 //This is a simple OS shell designed by our team!
 int main(int argc, char const *argv[]){
+  FILE * source;
   const char *old_path = getenv("PATH");
   chdir(getenv("HOME"));
+  load_history(source);
   command_loop();
+  chdir(getenv("HOME"));
+  save_history(source);
   printf("Restoring Path...\n");
   setenv("PATH",old_path,1);
   return 0;
@@ -298,6 +304,30 @@ char **shell_past_command(char **arguments){
   arguments[0] = NULL;
   fprintf(stderr, "ERROR: Not valid history function.\n");
   return arguments;
+}
+
+void save_history(FILE * source){
+  source = fopen("hist_list.bin", "wb");
+  int i,j;
+
+  for(i = history_index; i < MAX_HISTORY_SIZE; i++){
+    if(history_array[i].cmd){
+      fwrite(&history_array[i], sizeof(struct HISTORY), 1, source);
+    }
+  }
+
+  for(j = 0; j < history_index; j++){
+    if(history_array[j].cmd){
+      fwrite(&history_array[j], sizeof(struct HISTORY), 1, source);
+    }
+  }
+  fclose (source);
+}
+
+void load_history(FILE * source){
+  source = fopen("hist_list.bin", "rb");
+
+  fclose(source);
 }
 
 int create_process(char **arguments){
