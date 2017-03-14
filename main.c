@@ -304,30 +304,31 @@ char **shell_past_command(char **arguments){
   return arguments;
 }
 
-//TODO
-//MAYBE USE FPRINTF HERE!!!
 void save_history(FILE * source){
-  source = fopen("hist_list.bin", "wb");
+  source = fopen("hist_list.txt", "w+");
   int i,j;
-  /*
+
   for(i = history_index; i < MAX_HISTORY_SIZE; i++){
     if(history_array[i].cmd){
-      fwrite(&history_array[i], sizeof(struct HISTORY), 1, source);
+      fprintf(source, "%d %s",history_array[i].command_id,history_array[i].cmd);
     }
   }
 
   for(j = 0; j < history_index; j++){
     if(history_array[j].cmd){
-      fwrite(&history_array[j], sizeof(struct HISTORY), 1, source);
+      fprintf(source, "%d %s",history_array[j].command_id,history_array[j].cmd);
     }
   }
-  */
 
   fclose (source);
 }
 
 void load_history(FILE * source){
-  source = fopen("hist_list.bin", "rb");
+  source = fopen("hist_list.txt", "r");
+  //If possble get last command id.
+  // set counter to command id.
+  //add to history while looped.
+
 
   fclose(source);
 }
