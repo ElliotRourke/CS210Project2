@@ -13,7 +13,7 @@
 
 /* Define constants */
 #define STRINGSIZE 50
-#define MAX_HISTORY_SIZE 5
+#define MAX_HISTORY_SIZE 20
 
 /* Define functions */
 void command_loop();
@@ -329,8 +329,33 @@ void load_history(FILE * source){
   //If possble get last command id.
   // set counter to command id.
   //add to history while looped.
+  char buffer[MAX_HISTORY_SIZE];
+  char *str;
+  char cmd[STRINGSIZE+1];
+  char **cmds;
+  int cmd_id,i;
+  int max;
 
+  //GET MAX COUNTER AND ADD TOKENS TO ARRAY
+  while(fgets(buffer,sizeof(buffer),source)){
+    cmd_id = strtol(&buffer[0],&str,10);
 
+    //TOKENIZE
+    cmds = parse_input(buffer);
+    strcpy(cmd,cmds[1]);
+    i = 2;
+    if(cmds[i] != NULL){
+      strcat(cmd," ");
+      strcat(cmd,cmds[i]);
+    }
+
+    //MAX COUNTER
+    if(cmd_id > counter){
+      counter = cmd_id;
+    }
+    printf("%s\n",cmd);
+
+  }
 
   fclose(source);
 }
