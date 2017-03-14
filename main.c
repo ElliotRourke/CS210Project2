@@ -204,6 +204,7 @@ int shell_history(){
 
 char **shell_past_command(char **arguments){
   int a = 0;
+  char *str;
   int b = 0;
   int c = 0;
   int i,j;
@@ -236,7 +237,7 @@ char **shell_past_command(char **arguments){
   }
 
   if((arguments[0][0]=='!') && (arguments[0][1]!='-')){
-    a = char_to_int(&arguments[0][1]);
+    a = strtol(&arguments[0][1],&str,10);
     if((a <= 0) || (a > 20)){
       arguments[0] = NULL;
       fprintf(stderr, "ERROR: Not valid history function. Command IDs start a numeral 1.\n");
@@ -266,18 +267,18 @@ char **shell_past_command(char **arguments){
   }
 
   if((arguments[0][1]=='-') && (arguments[0][0]=='!')){
-    a = char_to_int(&arguments[0][2]);
+    a = strtol(&arguments[0][2],&str,10);
     b = counter;
     if(a < 1){
       arguments[0] = NULL;
-      fprintf(stderr, "ERROR: Not valid history function. Command IDs start a numeral 1.\n");
+      fprintf(stderr, "ERROR: Not valid history function. Command index start a numeral 1.\n");
       return arguments;
     }
     c = b - a;
     c = c % MAX_HISTORY_SIZE;
     if(c <= 0){
       arguments[0] = NULL;
-      fprintf(stderr, "ERROR: Not valid history function. Command ID specified is less than 1.\n");
+      fprintf(stderr, "ERROR: Not valid history function. Command index specified is less than 1.\n");
       return arguments;
     }
     strcpy(temp_cmd,history_array[c-1].cmd);
@@ -328,6 +329,7 @@ void load_history(FILE * source){
   //If possble get last command id.
   // set counter to command id.
   //add to history while looped.
+
 
 
   fclose(source);

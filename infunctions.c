@@ -41,32 +41,6 @@ int shell_setpath(char **arguments){
   return 1;
 }
 
-int char_to_int(char * temp){
-  int x = 0;
-  int y = 0;
-  int z = 0;
-  int i;
-  char c[2];
-
-  if((temp == NULL) || (strlen(temp) > 2)){
-    return z;
-  }
-  strcpy(c,temp);
-
-  if((isdigit(c[0])) && (c[1] == '\0')){
-      x = c[0] - '0';
-      return x;
-    }else if((isdigit(c[0])) && (isdigit(c[1]))){
-      x = c[0] - '0';
-      x  = x * 10;
-      y = c[1] - '0';
-      z = x + y;
-      return z;
-    }else{
-      return z;
-    }
-}
-
 int shell_help(char **arguments){
   if(arguments[1] == NULL){
     printf("|| General Help List || \n \n");
