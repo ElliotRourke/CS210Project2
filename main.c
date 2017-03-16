@@ -89,8 +89,7 @@ char *read_input(){
   line = fgets(buffer, buffer_size,stdin);
   strcpy(cmd,buffer);
 
-  if(strcspn(cmd,"!") == 0)
-  {
+  if((strcspn(cmd,"!") == 0) || (cmd[0] == '\n')){
     return line;
   }else{
     add_to_history(cmd);
@@ -144,8 +143,13 @@ int execute_input(char **arguments){
   }
 
   if((strcmp(arguments[0],"history") == 0)){
-    shell_history();
-    return 1;
+    if(arguments[1] == NULL){
+      shell_history();
+      return 1;
+    }else{
+      fprintf(stderr, "Invalid arguments.\n");
+      return 1;
+    }
   }
 
   if((strcmp(arguments[0],"exit") == 0)){
@@ -183,8 +187,6 @@ void add_to_history(char *input){
   counter++;
 }
 
-//TODO strange interaction with history functions counter in terminal.
-//Command ID's are correct and get correct commands but display is wrong.
 int shell_history(){
   int i,j;
 
@@ -238,7 +240,7 @@ char **shell_past_command(char **arguments){
 
   if((arguments[0][0]=='!') && (arguments[0][1]!='-')){
     a = strtol(&arguments[0][1],&str,10);
-    if((a <= 0) || (a > 20)){
+    if((a <= 0) || (a > counter)){
       arguments[0] = NULL;
       fprintf(stderr, "ERROR: Not valid history function. Command IDs start a numeral 1.\n");
       return arguments;
@@ -274,7 +276,7 @@ char **shell_past_command(char **arguments){
       fprintf(stderr, "ERROR: Not valid history function. Command index start a numeral 1.\n");
       return arguments;
     }
-    c = b - a;
+    c = b - a - 1;
     c = c % MAX_HISTORY_SIZE;
     if(c <= 0){
       arguments[0] = NULL;
@@ -326,35 +328,45 @@ void save_history(FILE * source){
 
 void load_history(FILE * source){
   source = fopen("hist_list.txt", "r");
-  //If possble get last command id.
-  // set counter to command id.
-  //add to history while looped.
-  char buffer[MAX_HISTORY_SIZE];
-  char *str;
+  char **temp_hist = malloc(MAX_HISTORY_SIZE * sizeof(char*));
+  char buffer[STRINGSIZE+1];
   char cmd[STRINGSIZE+1];
+  char *str;
   char **cmds;
-  int cmd_id,i;
-  int max;
+  int cmd_id,i,j;
 
-  //GET MAX COUNTER AND ADD TOKENS TO ARRAY
+  if(!source){
+    fprintf(stderr, "Error unable to open History file.\n");
+    fprintf(stderr, "New file will be created upon exit.\n");
+    return;
+  }
+
+  j = 0;
   while(fgets(buffer,sizeof(buffer),source)){
     cmd_id = strtol(&buffer[0],&str,10);
 
-    //TOKENIZE
-    cmds = parse_input(buffer);
-    strcpy(cmd,cmds[1]);
-    i = 2;
-    if(cmds[i] != NULL){
-      strcat(cmd," ");
-      strcat(cmd,cmds[i]);
-    }
-
-    //MAX COUNTER
-    if(cmd_id > counter){
+    if(cmd_id < counter){
       counter = cmd_id;
     }
-    printf("%s\n",cmd);
 
+    cmds = parse_input(buffer);
+    strcpy(cmd,cmds[1]);
+
+    for(i = 2; i < STRINGSIZE; i++){
+      if(cmds[i] != NULL){
+        strcat(cmd," ");
+        strcat(cmd,cmds[i]);
+      }
+    }
+    strcat(cmd,"\n");
+    temp_hist[j] = strdup(cmd);
+    j++;
+  }
+
+  for(i = 0; i < MAX_HISTORY_SIZE; i++){
+    if(temp_hist[i]){
+      add_to_history(temp_hist[i]);
+    }
   }
 
   fclose(source);
@@ -366,12 +378,12 @@ int create_process(char **arguments){
 
   if(pid < 0){
     fprintf(stderr, "Fork Failed\n");
-    perror("Shell");
+    perror(arguments[0]);
     exit(-1);
   }
   else if(pid == 0){
     if(execvp(arguments[0],arguments) == -1){
-      perror("Shell");
+      perror(arguments[0]);
     }
     exit(EXIT_FAILURE);
   }else{
