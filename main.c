@@ -14,6 +14,7 @@
 /* Define constants */
 #define STRINGSIZE 50
 #define MAX_HISTORY_SIZE 20
+#define MAX_ALIAS_SIZE 10
 
 /* Define functions */
 void command_loop();
@@ -25,15 +26,24 @@ int shell_history();
 char **shell_past_command(char **arguments);
 void save_history(FILE * source);
 void load_history(FILE * source);
+int add_alias(char **arguments);
 int create_process(char **arguments);
 
 int history_index = 0;
-int counter = 1;
+int history_counter = 1;
+int alias_index = 0;
+int alias_counter = 1;
 
 struct HISTORY{
   int command_id;
   char *cmd;
 }history_array[MAX_HISTORY_SIZE];
+
+struct ALIAS{
+  int command_id;
+  char *cmd;
+  char *alias;
+}alias_array[MAX_ALIAS_SIZE];
 
 
 //This is a simple OS shell designed by our team!
@@ -157,6 +167,10 @@ int execute_input(char **arguments){
     return 0;
   }
 
+  if((strcmp(arguments[0],"alias") == 0)){
+    return add_alias(arguments);
+  }
+
   if((strcmp(arguments[0],"cd") == 0)){
     return shell_cd(arguments);
   }
@@ -182,9 +196,9 @@ void add_to_history(char *input){
   }
 
   history_array[history_index].cmd = strdup(input);
-  history_array[history_index].command_id = counter;
+  history_array[history_index].command_id = history_counter;
   history_index = (history_index + 1 ) % MAX_HISTORY_SIZE;
-  counter++;
+  history_counter++;
 }
 
 int shell_history(){
@@ -240,7 +254,7 @@ char **shell_past_command(char **arguments){
 
   if((arguments[0][0]=='!') && (arguments[0][1]!='-')){
     a = strtol(&arguments[0][1],&str,10);
-    if((a <= 0) || (a > counter)){
+    if((a <= 0) || (a > history_counter)){
       arguments[0] = NULL;
       fprintf(stderr, "ERROR: Not valid history function. Command IDs start a numeral 1.\n");
       return arguments;
@@ -270,7 +284,7 @@ char **shell_past_command(char **arguments){
 
   if((arguments[0][1]=='-') && (arguments[0][0]=='!')){
     a = strtol(&arguments[0][2],&str,10);
-    b = counter;
+    b = history_counter;
     if(a < 1){
       arguments[0] = NULL;
       fprintf(stderr, "ERROR: Not valid history function. Command index start a numeral 1.\n");
@@ -345,8 +359,8 @@ void load_history(FILE * source){
   while(fgets(buffer,sizeof(buffer),source)){
     cmd_id = strtol(&buffer[0],&str,10);
 
-    if(cmd_id < counter){
-      counter = cmd_id;
+    if(cmd_id < history_counter){
+      history_counter = cmd_id;
     }
 
     cmds = parse_input(buffer);
@@ -370,6 +384,27 @@ void load_history(FILE * source){
   }
 
   fclose(source);
+}
+
+int add_alias(char **arguments){
+
+  if(arguments[1] != NULL && arguments[2] != NULL){
+    if(alias_array[alias_index].cmd != NULL){
+      free(alias_array[alias_index].cmd);
+    }
+
+    alias_array[alias_index].alias = strdup(arguments[1]);
+    alias_array[alias_index].alias = strdup(arguments[2]);
+
+    alias_array[alias_index].command_id = alias_counter;
+    alias_index = (alias_index + 1 ) % MAX_ALIAS_SIZE;
+    alias_index++;
+
+    return 1;
+  }else{
+    fprintf(stderr, "Invalid arguments. Please enter: alias <alias name> <command>\n");
+    return 1;
+  }
 }
 
 int create_process(char **arguments){
