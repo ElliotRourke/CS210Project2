@@ -46,6 +46,7 @@ struct ALIAS{
   char *alias;
 }alias_array[MAX_ALIAS_SIZE];
 
+void change_alias(struct ALIAS *x, char *cmd);
 
 //This is a simple OS shell designed by our team!
 int main(int argc, char const *argv[]){
@@ -391,52 +392,65 @@ void load_history(FILE * source){
 }
 
 int add_alias(char **arguments){
-  int i;
-  char temp[STRINGSIZE+1];
+  int i,j,index;
+  int existing_alias = 1;
+  char *temp_cmd = malloc(STRINGSIZE * sizeof(char*));
+  char *temp_arg = malloc(STRINGSIZE * sizeof(char*));
 
   if(arguments[1] != NULL && arguments[2] != NULL){
 
-    if(alias_array[alias_index].cmd != NULL){
-      free(alias_array[alias_index].alias);
-      free(alias_array[alias_index].cmd);
-    }
+      if(alias_array[alias_index].cmd != NULL){
+        free(alias_array[alias_index].alias);
+        free(alias_array[alias_index].cmd);
+      }
 
-  /*  //LOTS OF DUPLICATE CODE....
-   for(i = 0; i < MAX_ALIAS_SIZE; i++){
-      if(alias_array[i].alias){
-        if(strcmp(alias_array[i].alias,arguments[1]) == 0){
-          strcpy(temp,arguments[2]);
-          for(i = 3; i < STRINGSIZE; i++){
-            if(arguments[i] != NULL){
-              strncat(temp," ",STRINGSIZE);
-              strncat(temp,arguments[i],STRINGSIZE);
-            }
+      //Check if it exsists here
+      for(i = 0; i < MAX_ALIAS_SIZE; i++){
+        if(alias_array[i].alias){
+          if(strcmp(alias_array[i].alias,arguments[1]) == 0){
+            existing_alias = 0;
+            index = i;
           }
-          alias_array[i].cmd = strdup(temp);
-          return 1;
         }
       }
-    } */
 
-    alias_array[alias_index].alias = strdup(arguments[1]);
-    strcpy(temp,arguments[2]);
-    for(i = 3; i < STRINGSIZE; i++){
-      if(arguments[i] != NULL){
-        strncat(temp," ",STRINGSIZE);
-        strncat(temp,arguments[i],STRINGSIZE);
-      }
-    }
-    alias_array[alias_index].cmd = strdup(temp);
-    printf("Adding new :%s\n",alias_array[alias_index].cmd );
+      if(existing_alias ==  0){
+        //OVERWRITE CASE
+        strncpy(temp_cmd,arguments[2],STRINGSIZE);
+        change_alias(&alias_array[index],temp_cmd);
+        return 1;
+      }else{
+        //NEW ALIAS CASE
+        alias_array[alias_index].alias = strdup(arguments[1]);
+        if(arguments[3] == NULL){
+          strncpy(temp_cmd,arguments[2],STRINGSIZE);
+        }else{
+            j = 3;
+            strncpy(temp_cmd,arguments[2],STRINGSIZE);
+            do{
+              if(arguments[j] != NULL){
+                strcpy(temp_arg,arguments[j]);
+              }
+              strcat(temp_cmd," ");
+              strcat(temp_cmd,temp_arg);
+              j++;
+            }while(arguments[j] != NULL);
+          }
+        }
+        alias_array[alias_index].cmd = strdup(temp_cmd);
 
-    alias_array[alias_index].command_id = alias_counter;
-    alias_index = (alias_index + 1 ) % MAX_ALIAS_SIZE;
-    alias_index++;
-    return 1;
+        alias_array[alias_index].command_id = alias_counter;
+        alias_index = (alias_index + 1 ) % MAX_ALIAS_SIZE;
+        alias_index++;
+        return 1;
   }else{
     fprintf(stderr, "Invalid arguments. Please enter: alias <alias name> <command>\n");
     return 1;
   }
+}
+
+void change_alias(struct ALIAS *a, char *new){
+  a->cmd = new;
 }
 
 char **get_alias(char **arguments){
@@ -447,8 +461,6 @@ char **get_alias(char **arguments){
   //PARSE COMMAND TO ARGUMENTS - DONE
   //RETURN THE COMMAND - DONE
 
-  char **tokens = malloc(STRINGSIZE * sizeof(char*));
-
   int i,j;
   char *temp_cmd = malloc(STRINGSIZE * sizeof(char*));
   char *temp_arg = malloc(STRINGSIZE * sizeof(char*));
@@ -457,19 +469,21 @@ char **get_alias(char **arguments){
     if(alias_array[i].alias){
       if(strcmp(alias_array[i].alias,arguments[0]) == 0){
         if(arguments[1] == NULL){
+          printf("here\n");
+          printf("%s\n",alias_array[i].cmd);
           strcpy(temp_cmd,alias_array[i].cmd);
           arguments = parse_input(temp_cmd);
         }else{
             j = 1;
             strcpy(temp_cmd,alias_array[i].cmd);
             do{
-              if(arguments[i] != NULL){
+              if(arguments[j] != NULL){
                 strcpy(temp_arg,arguments[i]);
               }
               strcat(temp_cmd," ");
               strcat(temp_cmd,temp_arg);
               j++;
-            }while(arguments[i] != NULL);
+            }while(arguments[j] != NULL);
             arguments = parse_input(temp_cmd);
           }
       }
