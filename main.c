@@ -27,6 +27,7 @@ char **shell_past_command(char **arguments);
 void save_history(FILE * source);
 void load_history(FILE * source);
 int add_alias(char **arguments);
+char **get_alias(char **arguments);
 int create_process(char **arguments);
 
 int history_index = 0;
@@ -186,6 +187,8 @@ int execute_input(char **arguments){
   if((strcmp(arguments[0],"help") == 0)){
     return shell_help(arguments);
   }
+
+  get_alias(arguments);
 
   return create_process(arguments);
 }
@@ -387,7 +390,7 @@ void load_history(FILE * source){
 }
 
 int add_alias(char **arguments){
-  int i = 2;
+  int i;
   char temp[STRINGSIZE+1];
 
   if(arguments[1] != NULL && arguments[2] != NULL){
@@ -399,7 +402,7 @@ int add_alias(char **arguments){
     alias_array[alias_index].alias = strdup(arguments[1]);
     //Need to check here - What if command has spaces?
     strcpy(temp,arguments[2]);
-    for(i = 2; i < STRINGSIZE; i++){
+    for(i = 3; i < STRINGSIZE; i++){
       if(arguments[i] != NULL){
         strcat(temp," ");
         strcat(temp,arguments[i]);
@@ -410,12 +413,32 @@ int add_alias(char **arguments){
     alias_array[alias_index].command_id = alias_counter;
     alias_index = (alias_index + 1 ) % MAX_ALIAS_SIZE;
     alias_index++;
-
     return 1;
   }else{
     fprintf(stderr, "Invalid arguments. Please enter: alias <alias name> <command>\n");
     return 1;
   }
+}
+
+char **get_alias(char **arguments){
+  char **tokens = malloc(STRINGSIZE *sizeof(char*));
+  //LOOP THROUGH THE ARRAY OF ALIASES - DONE
+  //CHECK IF THE COMMAND ENTERED IS AN ALIAS - HERE
+  //IF IT IS
+      //CHECK IF THE COMMAND IT HOLDS IS ALSO AN ALIAS (repeat until not found)
+  //PARSE COMMAND TO ARGUMENTS
+  //RETURN THE COMMAND
+  int i;
+  for(i = 0; i < MAX_ALIAS_SIZE; i++){
+    if(alias_array[i].alias){
+      if(strcmp(alias_array[i].alias,arguments[1]) == 0){
+        printf("%d %s %s\n",alias_array[i].command_id,alias_array[i].alias,alias_array[i].cmd);
+      }else{
+        printf("NOD!\n");
+      }
+    }
+  }
+  return tokens;
 }
 
 int create_process(char **arguments){
