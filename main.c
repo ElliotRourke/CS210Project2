@@ -392,57 +392,63 @@ void load_history(FILE * source){
 }
 
 int add_alias(char **arguments){
-  int i,j,index;
+  int i,index;
+  int j = 3;
   int existing_alias = 1;
   char *temp_cmd = malloc(STRINGSIZE * sizeof(char*));
   char *temp_arg = malloc(STRINGSIZE * sizeof(char*));
 
   if(arguments[1] != NULL && arguments[2] != NULL){
+    if(alias_array[alias_index].cmd != NULL){
+      free(alias_array[alias_index].alias);
+      free(alias_array[alias_index].cmd);
+    }
 
-      if(alias_array[alias_index].cmd != NULL){
-        free(alias_array[alias_index].alias);
-        free(alias_array[alias_index].cmd);
-      }
-
-      //Check if it exsists here
-      for(i = 0; i < MAX_ALIAS_SIZE; i++){
-        if(alias_array[i].alias){
-          if(strcmp(alias_array[i].alias,arguments[1]) == 0){
-            existing_alias = 0;
-            index = i;
-          }
+    //Check if it exsists here
+    for(i = 0; i < MAX_ALIAS_SIZE; i++){
+      if(alias_array[i].alias){
+        if(strcmp(alias_array[i].alias,arguments[1]) == 0){
+          existing_alias = 0;
+          index = i;
         }
       }
+    }
 
-      if(existing_alias ==  0){
-        //OVERWRITE CASE
+    //OVERWRITE CASE
+    if(existing_alias ==  0){
+      strncpy(temp_cmd,arguments[2],STRINGSIZE);
+      do{
+        if(arguments[j] != NULL){
+          strcpy(temp_arg,arguments[j]);
+        }
+        strcat(temp_cmd," ");
+        strcat(temp_cmd,temp_arg);
+        j++;
+      }while(arguments[j] != NULL);
+      change_alias(&alias_array[index],temp_cmd);
+      return 1;
+    }else{
+      //NEW ALIAS CASE
+      alias_array[alias_index].alias = strdup(arguments[1]);
+      if(arguments[3] == NULL){
         strncpy(temp_cmd,arguments[2],STRINGSIZE);
-        change_alias(&alias_array[index],temp_cmd);
-        return 1;
       }else{
-        //NEW ALIAS CASE
-        alias_array[alias_index].alias = strdup(arguments[1]);
-        if(arguments[3] == NULL){
-          strncpy(temp_cmd,arguments[2],STRINGSIZE);
-        }else{
-            j = 3;
-            strncpy(temp_cmd,arguments[2],STRINGSIZE);
-            do{
-              if(arguments[j] != NULL){
-                strcpy(temp_arg,arguments[j]);
-              }
-              strcat(temp_cmd," ");
-              strcat(temp_cmd,temp_arg);
-              j++;
-            }while(arguments[j] != NULL);
+        strncpy(temp_cmd,arguments[2],STRINGSIZE);
+        do{
+          if(arguments[j] != NULL){
+            strcpy(temp_arg,arguments[j]);
           }
-        }
-        alias_array[alias_index].cmd = strdup(temp_cmd);
-
-        alias_array[alias_index].command_id = alias_counter;
-        alias_index = (alias_index + 1 ) % MAX_ALIAS_SIZE;
-        alias_index++;
-        return 1;
+          strcat(temp_cmd," ");
+          strcat(temp_cmd,temp_arg);
+          j++;
+        }while(arguments[j] != NULL);
+      }
+    }
+      alias_array[alias_index].cmd = strdup(temp_cmd);
+      alias_array[alias_index].command_id = alias_counter;
+      alias_index = (alias_index + 1 ) % MAX_ALIAS_SIZE;
+      alias_index++;
+      return 1;
   }else{
     fprintf(stderr, "Invalid arguments. Please enter: alias <alias name> <command>\n");
     return 1;
@@ -469,8 +475,6 @@ char **get_alias(char **arguments){
     if(alias_array[i].alias){
       if(strcmp(alias_array[i].alias,arguments[0]) == 0){
         if(arguments[1] == NULL){
-          printf("here\n");
-          printf("%s\n",alias_array[i].cmd);
           strcpy(temp_cmd,alias_array[i].cmd);
           arguments = parse_input(temp_cmd);
         }else{
