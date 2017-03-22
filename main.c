@@ -387,14 +387,25 @@ void load_history(FILE * source){
 }
 
 int add_alias(char **arguments){
+  int i = 2;
+  char temp[STRINGSIZE+1];
 
   if(arguments[1] != NULL && arguments[2] != NULL){
     if(alias_array[alias_index].cmd != NULL){
+      free(alias_array[alias_index].alias);
       free(alias_array[alias_index].cmd);
     }
 
     alias_array[alias_index].alias = strdup(arguments[1]);
-    alias_array[alias_index].alias = strdup(arguments[2]);
+    //Need to check here - What if command has spaces?
+    strcpy(temp,arguments[2]);
+    for(i = 2; i < STRINGSIZE; i++){
+      if(arguments[i] != NULL){
+        strcat(temp," ");
+        strcat(temp,arguments[i]);
+      }
+    }
+    alias_array[alias_index].cmd = strdup(temp);
 
     alias_array[alias_index].command_id = alias_counter;
     alias_index = (alias_index + 1 ) % MAX_ALIAS_SIZE;
