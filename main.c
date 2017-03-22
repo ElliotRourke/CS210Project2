@@ -153,6 +153,7 @@ int execute_input(char **arguments){
     }
   }
 
+  //TODO VALIDATE HERE
   arguments = get_alias(arguments);
 
   if((strcmp(arguments[0],"history") == 0)){
@@ -394,21 +395,39 @@ int add_alias(char **arguments){
   char temp[STRINGSIZE+1];
 
   if(arguments[1] != NULL && arguments[2] != NULL){
+
     if(alias_array[alias_index].cmd != NULL){
       free(alias_array[alias_index].alias);
       free(alias_array[alias_index].cmd);
     }
 
+  /*  //LOTS OF DUPLICATE CODE....
+   for(i = 0; i < MAX_ALIAS_SIZE; i++){
+      if(alias_array[i].alias){
+        if(strcmp(alias_array[i].alias,arguments[1]) == 0){
+          strcpy(temp,arguments[2]);
+          for(i = 3; i < STRINGSIZE; i++){
+            if(arguments[i] != NULL){
+              strncat(temp," ",STRINGSIZE);
+              strncat(temp,arguments[i],STRINGSIZE);
+            }
+          }
+          alias_array[i].cmd = strdup(temp);
+          return 1;
+        }
+      }
+    } */
+
     alias_array[alias_index].alias = strdup(arguments[1]);
-    //Need to check here - What if command has spaces?
     strcpy(temp,arguments[2]);
     for(i = 3; i < STRINGSIZE; i++){
       if(arguments[i] != NULL){
-        strcat(temp," ");
-        strcat(temp,arguments[i]);
+        strncat(temp," ",STRINGSIZE);
+        strncat(temp,arguments[i],STRINGSIZE);
       }
     }
     alias_array[alias_index].cmd = strdup(temp);
+    printf("Adding new :%s\n",alias_array[alias_index].cmd );
 
     alias_array[alias_index].command_id = alias_counter;
     alias_index = (alias_index + 1 ) % MAX_ALIAS_SIZE;
@@ -423,15 +442,36 @@ int add_alias(char **arguments){
 char **get_alias(char **arguments){
   //LOOP THROUGH THE ARRAY OF ALIASES - DONE
   //CHECK IF THE COMMAND ENTERED IS AN ALIAS - DONE
-  //IF IT IS
-      //CHECK IF THE COMMAND IT HOLDS IS ALSO AN ALIAS (repeat until not found)
-  //PARSE COMMAND TO ARGUMENTS
-  //RETURN THE COMMAND
-  int i;
+  //IF IT IS - DONE
+      //CHECK IF THE COMMAND IT HOLDS IS ALSO AN ALIAS (repeat until not found) - HERE
+  //PARSE COMMAND TO ARGUMENTS - DONE
+  //RETURN THE COMMAND - DONE
+
+  char **tokens = malloc(STRINGSIZE * sizeof(char*));
+
+  int i,j;
+  char *temp_cmd = malloc(STRINGSIZE * sizeof(char*));
+  char *temp_arg = malloc(STRINGSIZE * sizeof(char*));
+
   for(i = 0; i < MAX_ALIAS_SIZE; i++){
     if(alias_array[i].alias){
       if(strcmp(alias_array[i].alias,arguments[0]) == 0){
-        strncpy(arguments[0],alias_array[i].cmd,STRINGSIZE);
+        if(arguments[1] == NULL){
+          strcpy(temp_cmd,alias_array[i].cmd);
+          arguments = parse_input(temp_cmd);
+        }else{
+            j = 1;
+            strcpy(temp_cmd,alias_array[i].cmd);
+            do{
+              if(arguments[i] != NULL){
+                strcpy(temp_arg,arguments[i]);
+              }
+              strcat(temp_cmd," ");
+              strcat(temp_cmd,temp_arg);
+              j++;
+            }while(arguments[i] != NULL);
+            arguments = parse_input(temp_cmd);
+          }
       }
     }
   }
