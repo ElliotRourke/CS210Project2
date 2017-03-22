@@ -27,7 +27,10 @@ char **shell_past_command(char **arguments);
 void save_history(FILE * source);
 void load_history(FILE * source);
 int add_alias(char **arguments);
+int remove_alias(char **arguments);
 char **get_alias(char **arguments);
+void save_aliases(FILE * source);
+void load_aliases(FILE * source);
 int create_process(char **arguments);
 
 int history_index = 0;
@@ -57,6 +60,7 @@ int main(int argc, char const *argv[]){
   command_loop();
   chdir(getenv("HOME"));
   save_history(source);
+  save_aliases(source);
   printf("Restoring Path...\n");
   setenv("PATH",old_path,1);
   return 0;
@@ -174,6 +178,10 @@ int execute_input(char **arguments){
 
   if((strcmp(arguments[0],"alias") == 0)){
     return add_alias(arguments);
+  }
+
+  if((strcmp(arguments[0],"unalias") == 0)){
+    return remove_alias(arguments);
   }
 
   if((strcmp(arguments[0],"cd") == 0)){
@@ -327,7 +335,7 @@ char **shell_past_command(char **arguments){
 }
 
 void save_history(FILE * source){
-  source = fopen("hist_list.txt", "w+");
+  source = fopen(".hist_list.txt", "w+");
   int i,j;
 
   for(i = history_index; i < MAX_HISTORY_SIZE; i++){
@@ -346,7 +354,7 @@ void save_history(FILE * source){
 }
 
 void load_history(FILE * source){
-  source = fopen("hist_list.txt", "r");
+  source = fopen(".hist_list.txt", "r");
   char **temp_hist = malloc(MAX_HISTORY_SIZE * sizeof(char*));
   char buffer[STRINGSIZE+1];
   char cmd[STRINGSIZE+1];
@@ -393,6 +401,7 @@ void load_history(FILE * source){
 
 int add_alias(char **arguments){
   int i,index;
+  int k = 0;
   int j = 3;
   int existing_alias = 1;
   char *temp_cmd = malloc(STRINGSIZE * sizeof(char*));
@@ -413,7 +422,6 @@ int add_alias(char **arguments){
         }
       }
     }
-
     //OVERWRITE CASE
     if(existing_alias ==  0){
       strncpy(temp_cmd,arguments[2],STRINGSIZE);
@@ -426,6 +434,7 @@ int add_alias(char **arguments){
         j++;
       }while(arguments[j] != NULL);
       change_alias(&alias_array[index],temp_cmd);
+      fprintf(stderr, "Alias %s has been overwritten.\n",alias_array[index].alias);
       return 1;
     }else{
       //NEW ALIAS CASE
@@ -447,12 +456,48 @@ int add_alias(char **arguments){
       alias_array[alias_index].cmd = strdup(temp_cmd);
       alias_array[alias_index].command_id = alias_counter;
       alias_index = (alias_index + 1 ) % MAX_ALIAS_SIZE;
-      alias_index++;
+      alias_counter++;
       return 1;
+  }else if(arguments[1] == NULL && arguments[2] == NULL){
+    for(i = 0; i < MAX_ALIAS_SIZE; i++){
+      if(alias_array[i].alias != NULL){
+        printf("ID: %d Alias: %s  Command: %s\n",alias_array[i].command_id,alias_array[i].alias,alias_array[i].cmd);
+      }else{
+        k++;
+      }
+    }
+    if(k == MAX_ALIAS_SIZE){
+      fprintf(stderr, "No aliases found.\n");
+    }
+    return 1;
   }else{
-    fprintf(stderr, "Invalid arguments. Please enter: alias <alias name> <command>\n");
+    fprintf(stderr, "Invalid argumnets.\n");
     return 1;
   }
+}
+
+int remove_alias(char **arguments){
+  int i,index;
+
+  for(i = 0; i < MAX_ALIAS_SIZE; i++){
+    if(alias_array[i].alias){
+      if(strcmp(alias_array[i].alias,arguments[1]) == 0){
+        index = i;
+        alias_array[i].command_id = 0;
+        alias_array[i].alias = NULL;
+        alias_array[i].cmd = NULL;
+      }else{
+        fprintf(stderr, "Alias not found.\n");
+        return 1;
+      }
+    }
+  }
+
+  for(i = alias_index; i < MAX_ALIAS_SIZE - 1; i++){
+    alias_array[i] = alias_array[i+1];
+  }
+
+  return 1;
 }
 
 void change_alias(struct ALIAS *a, char *new){
@@ -494,6 +539,29 @@ char **get_alias(char **arguments){
     }
   }
   return arguments;
+}
+
+void save_aliases(FILE * source){
+  source = fopen(".aliases.txt", "w+");
+  int i,j;
+
+  for(i = history_index; i < MAX_HISTORY_SIZE; i++){
+    if(alias_array[i].alias){
+      fprintf(source, "%d %s %s",alias_array[i].command_id,alias_array[i].alias,alias_array[i].cmd);
+    }
+  }
+
+  for(j = 0; j < history_index; j++){
+    if(history_array[j].cmd){
+      fprintf(source, "%d %s %s",alias_array[i].command_id,alias_array[i].alias,alias_array[i].cmd);
+    }
+  }
+
+  fclose (source);
+}
+
+void load_aliases(FILE * source){
+
 }
 
 int create_process(char **arguments){
