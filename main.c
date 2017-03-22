@@ -153,6 +153,8 @@ int execute_input(char **arguments){
     }
   }
 
+  arguments = get_alias(arguments);
+
   if((strcmp(arguments[0],"history") == 0)){
     if(arguments[1] == NULL){
       shell_history();
@@ -187,8 +189,6 @@ int execute_input(char **arguments){
   if((strcmp(arguments[0],"help") == 0)){
     return shell_help(arguments);
   }
-
-  get_alias(arguments);
 
   return create_process(arguments);
 }
@@ -421,9 +421,8 @@ int add_alias(char **arguments){
 }
 
 char **get_alias(char **arguments){
-  char **tokens = malloc(STRINGSIZE *sizeof(char*));
   //LOOP THROUGH THE ARRAY OF ALIASES - DONE
-  //CHECK IF THE COMMAND ENTERED IS AN ALIAS - HERE
+  //CHECK IF THE COMMAND ENTERED IS AN ALIAS - DONE
   //IF IT IS
       //CHECK IF THE COMMAND IT HOLDS IS ALSO AN ALIAS (repeat until not found)
   //PARSE COMMAND TO ARGUMENTS
@@ -431,14 +430,12 @@ char **get_alias(char **arguments){
   int i;
   for(i = 0; i < MAX_ALIAS_SIZE; i++){
     if(alias_array[i].alias){
-      if(strcmp(alias_array[i].alias,arguments[1]) == 0){
-        printf("%d %s %s\n",alias_array[i].command_id,alias_array[i].alias,alias_array[i].cmd);
-      }else{
-        printf("NOD!\n");
+      if(strcmp(alias_array[i].alias,arguments[0]) == 0){
+        strncpy(arguments[0],alias_array[i].cmd,STRINGSIZE);
       }
     }
   }
-  return tokens;
+  return arguments;
 }
 
 int create_process(char **arguments){
