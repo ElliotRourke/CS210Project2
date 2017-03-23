@@ -1,6 +1,8 @@
 //TODO
-// IMPROVE ERROR MESSAGES
-// CD (Should try to check which file the user wanted)
+// CHECK ALIAS A ALIAS (A SHOULD BE ALIAS IT ISN'T)
+// CHECK !! ON HISTORY AFTER load_history
+// CHECK SEGFAULT FROM ALIASING CD /
+//CHECK PROBLEM WITH ADDING THE ALIAS AFTER REMOVING - IT FILLS WRONG SPOT
 
 #include <stdio.h>
 #include <string.h>
@@ -266,7 +268,7 @@ char **shell_past_command(char **arguments){
     return arguments;
   }
 
-  if((arguments[0][0]=='!') && (arguments[0][1]!='-')){
+  if((arguments[0][0]=='!') && (arguments[0][1]!='-') && (arguments[0][2]== '\0')){
     a = strtol(&arguments[0][1],&str,10);
     if((a <= 0) || (a > history_counter)){
       arguments[0] = NULL;
@@ -296,7 +298,7 @@ char **shell_past_command(char **arguments){
     }
   }
 
-  if((arguments[0][1]=='-') && (arguments[0][0]=='!')){
+  if((arguments[0][1]=='-') && (arguments[0][0]=='!') && (arguments[0][2]== '\0')){
     a = strtol(&arguments[0][2],&str,10);
     b = history_counter;
     if(a < 1){
