@@ -410,7 +410,7 @@ int add_alias(char **arguments){
   char *temp_cmd = malloc(STRINGSIZE * sizeof(char*));
   char *temp_arg = malloc(STRINGSIZE * sizeof(char*));
 
-  if(arguments[1] != NULL && arguments[2] != NULL && alias_index != MAX_HISTORY_SIZE){
+  if(arguments[1] != NULL && arguments[2] != NULL){
     if(alias_array[alias_index].cmd != NULL){
       free(alias_array[alias_index].alias);
       free(alias_array[alias_index].cmd);
@@ -426,7 +426,7 @@ int add_alias(char **arguments){
       }
     }
 
-    if(alias_index == MAX_ALIAS_SIZE && existing_alias != 0){
+    if(alias_index > MAX_ALIAS_SIZE && existing_alias != 0){
         fprintf(stderr, "Alias list full. Cannot add alias.\n");
         return 1;
       }
@@ -462,6 +462,7 @@ int add_alias(char **arguments){
         }while(arguments[j] != NULL);
       }
     }
+
       alias_array[alias_index].cmd = strdup(temp_cmd);
       alias_array[alias_index].command_id = alias_counter;
       alias_index = alias_index + 1;
@@ -496,12 +497,17 @@ int remove_alias(char **arguments){
         alias_array[i].command_id = 0;
         alias_array[i].alias = NULL;
         alias_array[i].cmd = NULL;
-        alias_index = alias_index - 1;
         myBool = 0;
+        index = i;
       }
     }else{
       count++;
     }
+  }
+
+  if(count == MAX_ALIAS_SIZE){
+    fprintf(stderr, "Alias list empty. Cannot remove alias.\n");
+    return 1;
   }
 
   if(myBool == 1){
@@ -509,13 +515,14 @@ int remove_alias(char **arguments){
     return 1;
   }
 
-  for(i = alias_index; i < MAX_ALIAS_SIZE - 1; i++){
+  alias_index = alias_index - 1;
+  printf("%d\n",alias_index );
+  for(i = index; i <= MAX_ALIAS_SIZE; i++){
     alias_array[i] = alias_array[i+1];
+    printf(" CURRENT %d : NEXT %d \n", i,i+1 );
   }
 
-  if(count == MAX_ALIAS_SIZE){
-    fprintf(stderr, "Alias list empty. Cannot remove alias.\n");
-  }
+  printf("%d\n",alias_index );
 
   return 1;
 }
