@@ -268,7 +268,8 @@ char **shell_past_command(char **arguments){
     return arguments;
   }
 
-  if((arguments[0][0]=='!') && (arguments[0][1]!='-') && (arguments[0][2]== '\0')){
+//CHECK IF ARGUMENT() 03/02 IS GREATER THAN LENGHT OR NOT A DIDGIT?
+  if((arguments[0][0]=='!') && (arguments[0][1]!='-')){
     a = strtol(&arguments[0][1],&str,10);
     if((a <= 0) || (a > history_counter)){
       arguments[0] = NULL;
@@ -298,7 +299,7 @@ char **shell_past_command(char **arguments){
     }
   }
 
-  if((arguments[0][1]=='-') && (arguments[0][0]=='!') && (arguments[0][2]== '\0')){
+  if((arguments[0][1]=='-') && (arguments[0][0]=='!')){
     a = strtol(&arguments[0][2],&str,10);
     b = history_counter;
     if(a < 1){
