@@ -415,7 +415,7 @@ int add_alias(char **arguments){
       free(alias_array[alias_index].alias);
       free(alias_array[alias_index].cmd);
     }
-
+    printf("1 %s 2 %s 3 %s\n",arguments[0],arguments[1],arguments[2] );
     //Check if it exsists here
     for(i = 0; i < MAX_ALIAS_SIZE; i++){
       if(alias_array[i].alias){
@@ -516,14 +516,9 @@ int remove_alias(char **arguments){
   }
 
   alias_index = alias_index - 1;
-  printf("%d\n",alias_index );
   for(i = index; i <= MAX_ALIAS_SIZE; i++){
     alias_array[i] = alias_array[i+1];
-    printf(" CURRENT %d : NEXT %d \n", i,i+1 );
   }
-
-  printf("%d\n",alias_index );
-
   return 1;
 }
 
@@ -554,7 +549,7 @@ char **get_alias(char **arguments){
             strcpy(temp_cmd,alias_array[i].cmd);
             do{
               if(arguments[j] != NULL){
-                strcpy(temp_arg,arguments[i]);
+                strcpy(temp_arg,arguments[j]);
               }
               strcat(temp_cmd," ");
               strcat(temp_cmd,temp_arg);
