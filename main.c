@@ -414,7 +414,6 @@ int add_alias(char **arguments){
       free(alias_array[alias_index].alias);
       free(alias_array[alias_index].cmd);
     }
-    printf("1 %s 2 %s 3 %s\n",arguments[0],arguments[1],arguments[2] );
     //Check if it exsists here
     for(i = 0; i < MAX_ALIAS_SIZE; i++){
       if(alias_array[i].alias){
@@ -566,15 +565,9 @@ void save_aliases(){
   FILE * source = fopen(".aliases", "w+");
   int i,j;
 
-  for(i = history_index; i < MAX_HISTORY_SIZE; i++){
+  for(i = 0; i < MAX_HISTORY_SIZE; i++){
     if(alias_array[i].alias != NULL){
       fprintf(source, "%d %s %s\n",alias_array[i].command_id,alias_array[i].alias,alias_array[i].cmd);
-    }
-  }
-
-  for(j = 0; j < history_index; j++){
-    if(alias_array[j].alias != NULL){
-      fprintf(source, "%d %s %s\n",alias_array[j].command_id,alias_array[j].alias,alias_array[j].cmd);
     }
   }
 
@@ -585,7 +578,7 @@ void load_aliases(){
   FILE * source = fopen(".aliases", "r");
   char buffer[STRINGSIZE+1];
   char **temp_alias = malloc(MAX_ALIAS_SIZE * sizeof(char*));
-  char **alias;
+  char **cmds;
 
   if(!source){
     fprintf(stderr, "Error unable to open Alias file.\n");
@@ -595,16 +588,16 @@ void load_aliases(){
 
   int i = 0;
   while(fgets(buffer,sizeof(buffer),source)){
-    alias = parse_input(buffer);
-    if(temp_alias){
-      add_alias(temp_alias);
-    }
+
+    printf("%s\n",buffer );
+    cmds = parse_input(buffer);
+    add_alias(cmds);
+
     i++;
     if(i == 10){
       break;
     }
   }
-
   fclose(source);
 }
 
