@@ -25,9 +25,9 @@ char **parse_input(char *input);
 int execute_input(char **arguments);
 void add_to_history(char *input);
 int shell_history();
-char **shell_past_command(char **arguments);
 void save_history();
 void load_history();
+char **shell_past_command(char **arguments);
 int add_alias(char **arguments);
 int remove_alias(char **arguments);
 char **get_alias(char **arguments);
@@ -467,7 +467,7 @@ int add_alias(char **arguments){
       alias_counter++;
       return 1;
   }else if(arguments[1] == NULL && arguments[2] == NULL){
-    for(i = 0; i <= MAX_ALIAS_SIZE; i++){
+    for(i = 0; i < MAX_ALIAS_SIZE; i++){
       if(alias_array[i].alias != NULL){
         printf("ID: %d Alias: %s  Command: %s\n",alias_array[i].command_id,alias_array[i].alias,alias_array[i].cmd);
       }else{
@@ -588,8 +588,6 @@ void load_aliases(){
 
   int i = 0;
   while(fgets(buffer,sizeof(buffer),source)){
-
-    printf("%s\n",buffer );
     cmds = parse_input(buffer);
     if(cmds[0]){
       add_alias(cmds);
