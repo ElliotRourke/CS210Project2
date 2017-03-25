@@ -26,13 +26,13 @@ int execute_input(char **arguments);
 void add_to_history(char *input);
 int shell_history();
 char **shell_past_command(char **arguments);
-void save_history(FILE * source);
-void load_history(FILE * source);
+void save_history();
+void load_history();
 int add_alias(char **arguments);
 int remove_alias(char **arguments);
 char **get_alias(char **arguments);
-void save_aliases(FILE * source);
-void load_aliases(FILE * source);
+void save_aliases();
+void load_aliases();
 int create_process(char **arguments);
 
 int history_index = 0;
@@ -55,15 +55,14 @@ void change_alias(struct ALIAS *x, char *cmd);
 
 //This is a simple OS shell designed by our team!
 int main(int argc, char const *argv[]){
-  FILE * source;
   const char *old_path = getenv("PATH");
   chdir(getenv("HOME"));
-  load_history(source);
-  load_aliases(source);
+  load_history();
+  load_aliases();
   command_loop();
   chdir(getenv("HOME"));
-  save_history(source);
-  save_aliases(source);
+  save_history();
+  save_aliases();
   printf("Restoring Path...\n");
   setenv("PATH",old_path,1);
   return 0;
@@ -267,8 +266,7 @@ char **shell_past_command(char **arguments){
       }
     return arguments;
   }
-
-//CHECK IF ARGUMENT() 03/02 IS GREATER THAN LENGHT OR NOT A DIDGIT?
+  //CHECK IF ARGUMENT() 03/02 IS GREATER THAN LENGHT OR NOT A DIDGIT?
   if((arguments[0][0]=='!') && (arguments[0][1]!='-')){
     a = strtol(&arguments[0][1],&str,10);
     if((a <= 0) || (a > history_counter)){
@@ -338,8 +336,8 @@ char **shell_past_command(char **arguments){
   return arguments;
 }
 
-void save_history(FILE * source){
-  source = fopen(".hist_list.txt", "w+");
+void save_history(){
+  FILE * source = fopen(".hist_list", "w+");
   int i,j;
 
   for(i = history_index; i < MAX_HISTORY_SIZE; i++){
@@ -357,8 +355,8 @@ void save_history(FILE * source){
   fclose (source);
 }
 
-void load_history(FILE * source){
-  source = fopen(".hist_list.txt", "r");
+void load_history(){
+  FILE * source = fopen(".hist_list", "r");
   char **temp_hist = malloc(MAX_HISTORY_SIZE * sizeof(char*));
   char buffer[STRINGSIZE+1];
   char cmd[STRINGSIZE+1];
@@ -564,8 +562,8 @@ char **get_alias(char **arguments){
   return arguments;
 }
 
-void save_aliases(FILE * source){
-  source = fopen(".aliases.txt", "w+");
+void save_aliases(){
+  FILE * source = fopen(".aliases", "w+");
   int i,j;
 
   for(i = history_index; i < MAX_HISTORY_SIZE; i++){
@@ -583,8 +581,29 @@ void save_aliases(FILE * source){
   fclose (source);
 }
 
-void load_aliases(FILE * source){
-  source = fopen(".aliases.txt", "r");
+void load_aliases(){
+  FILE * source = fopen(".aliases", "r");
+  char buffer[STRINGSIZE+1];
+  char **temp_alias = malloc(MAX_ALIAS_SIZE * sizeof(char*));
+  char **alias;
+
+  if(!source){
+    fprintf(stderr, "Error unable to open Alias file.\n");
+    fprintf(stderr, "New file will be created upon exit.\n");
+    return;
+  }
+
+  int i = 0;
+  while(fgets(buffer,sizeof(buffer),source)){
+    alias = parse_input(buffer);
+    if(temp_alias){
+      add_alias(temp_alias);
+    }
+    i++;
+    if(i == 10){
+      break;
+    }
+  }
 
   fclose(source);
 }
