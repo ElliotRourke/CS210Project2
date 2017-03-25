@@ -16,7 +16,7 @@
 /* Define constants */
 #define STRINGSIZE 50
 #define MAX_HISTORY_SIZE 20
-#define MAX_ALIAS_SIZE 3
+#define MAX_ALIAS_SIZE 10
 
 /* Define functions */
 void command_loop();
@@ -424,7 +424,7 @@ int add_alias(char **arguments){
       }
     }
 
-    if(alias_index > MAX_ALIAS_SIZE && existing_alias != 0){
+    if(alias_index >= MAX_ALIAS_SIZE && existing_alias != 0){
         fprintf(stderr, "Alias list full. Cannot add alias.\n");
         return 1;
       }
@@ -467,7 +467,7 @@ int add_alias(char **arguments){
       alias_counter++;
       return 1;
   }else if(arguments[1] == NULL && arguments[2] == NULL){
-    for(i = 0; i < MAX_ALIAS_SIZE; i++){
+    for(i = 0; i <= MAX_ALIAS_SIZE; i++){
       if(alias_array[i].alias != NULL){
         printf("ID: %d Alias: %s  Command: %s\n",alias_array[i].command_id,alias_array[i].alias,alias_array[i].cmd);
       }else{
@@ -591,8 +591,9 @@ void load_aliases(){
 
     printf("%s\n",buffer );
     cmds = parse_input(buffer);
-    add_alias(cmds);
-
+    if(cmds[0]){
+      add_alias(cmds);
+    }
     i++;
     if(i == 10){
       break;
