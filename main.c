@@ -274,7 +274,7 @@ char **shell_past_command(char **arguments){
   char *temp_arg = malloc(STRINGSIZE * sizeof(char*));
 
   /*Checks if !! history call was entered. */
-  if(strcmp(arguments[0],"!!") == 0){
+  if((strcmp(arguments[0],"!!") == 0) && (arguments[1] == NULL)){
     if(history_array[history_index-1].cmd == NULL){
       arguments[0] = NULL;
       fprintf(stderr, "ERROR: No elements in history.\n");
