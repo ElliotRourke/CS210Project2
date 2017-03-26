@@ -1,9 +1,8 @@
-//TODO
-// CHECK ALIAS A ALIAS (A SHOULD BE ALIAS IT ISN'T)
-// CHECK !! ON HISTORY AFTER load_history
-// CHECK SEGFAULT FROM ALIASING CD /
-//CHECK PROBLEM WITH ADDING THE ALIAS AFTER REMOVING - IT FILLS WRONG SPOT
+/*
+The main.c file handles the user input, saving, loading and initialisation of the shells functions.
+*/
 
+/*Import libraries used.*/
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -13,12 +12,12 @@
 #include <ctype.h>
 #include "infunctions.h"
 
-/* Define constants */
+/* Define constants. */
 #define STRINGSIZE 50
 #define MAX_HISTORY_SIZE 20
 #define MAX_ALIAS_SIZE 10
 
-/* Define functions */
+/* Define functions. */ //***ARE THERE ANY FUNCTIONS WE CAN BREAKDOWN/MOVE
 void command_loop();
 char *read_input();
 char **parse_input(char *input);
@@ -29,31 +28,37 @@ void save_history();
 void load_history();
 char **shell_past_command(char **arguments);
 int add_alias(char **arguments);
+int print_aliases();
 int remove_alias(char **arguments);
 char **get_alias(char **arguments);
 void save_aliases();
 void load_aliases();
 int create_process(char **arguments);
 
+/* Global variables used to control the position of elements in history array. */
 int history_index = 0;
 int history_counter = 1;
+/* Global variables used to control the position of elements in aliases array. */
 int alias_index = 0;
 int alias_counter = 1;
 
+/*Array of structs that hold the required data for commands stored in history.*/
 struct HISTORY{
   int command_id;
   char *cmd;
 }history_array[MAX_HISTORY_SIZE];
 
+/*Array of structs that hold the required data for commands stored as an alias. */
 struct ALIAS{
   int command_id;
   char *cmd;
   char *alias;
 }alias_array[MAX_ALIAS_SIZE];
 
+/*Definition of this function after the ALIAS struct is required. */
 void change_alias(struct ALIAS *x, char *cmd);
 
-//This is a simple OS shell designed by our team!
+/* Main function that initialises the environment, loads files and starts the command loop.*/
 int main(int argc, char const *argv[]){
   const char *old_path = getenv("PATH");
   chdir(getenv("HOME"));
@@ -68,7 +73,7 @@ int main(int argc, char const *argv[]){
   return 0;
 }
 
-//Handles commands input by user
+/*Allows the user to repeatedly enter input into the shell for execution. Until exit condtions are met.*/
 void command_loop(){
   int status;
   char *input;
@@ -93,6 +98,7 @@ void command_loop(){
 
 }
 
+/*Returns the entered user input. */ //***BUFFER PROBLEM?
 char *read_input(){
   ssize_t buffer_size = STRINGSIZE;
   char *line;
@@ -116,6 +122,7 @@ char *read_input(){
   return line;
 }
 
+/*Tokenises the input from the user and returns an array of tokens. */
 char **parse_input(char *input){
   int buffer_size = STRINGSIZE + 1;
   int index = 0;
@@ -147,6 +154,7 @@ char **parse_input(char *input){
   return tokens;
 }
 
+/*Takes parsed input and if possible matches it to a funtion within the shell. Else returns an error. */
 int execute_input(char **arguments){
 
   if(arguments[0] == NULL){
@@ -160,7 +168,6 @@ int execute_input(char **arguments){
     }
   }
 
-  //TODO VALIDATE HERE
   arguments = get_alias(arguments);
 
   if((strcmp(arguments[0],"history") == 0)){
@@ -176,6 +183,10 @@ int execute_input(char **arguments){
   if((strcmp(arguments[0],"exit") == 0)){
     printf("\n");
     return 0;
+  }
+
+  if((strcmp(arguments[0],"alias") == 0) && (arguments[1] == NULL) && (arguments[2] == NULL)){
+    return print_aliases();
   }
 
   if((strcmp(arguments[0],"alias") == 0)){
@@ -198,13 +209,10 @@ int execute_input(char **arguments){
     return shell_setpath(arguments);
   }
 
-  if((strcmp(arguments[0],"help") == 0)){
-    return shell_help(arguments);
-  }
-
   return create_process(arguments);
 }
 
+/*Adds the user input to the history array.*/
 void add_to_history(char *input){
   if(history_array[history_index].cmd != NULL){
     free(history_array[history_index].cmd);
@@ -216,6 +224,7 @@ void add_to_history(char *input){
   history_counter++;
 }
 
+/*Prints the history array. */
 int shell_history(){
   int i,j;
 
@@ -233,6 +242,12 @@ int shell_history(){
   return 1;
 }
 
+/*Retrieves past commands from the history depending on the history function used.
+ * !! retrieves the most recent item in history.
+ * !<no> retrieves the history element listed under that number from history.
+ * !-<no> retrieves the history element listed under the number from the current element minus the number.
+ * Then executes the retrieved commands.
+ */ //***BUFFER PROBLEM?
 char **shell_past_command(char **arguments){
   int a = 0;
   char *str;
@@ -336,6 +351,7 @@ char **shell_past_command(char **arguments){
   return arguments;
 }
 
+/*Saves all elements currently in the history array to file .hist_list. */
 void save_history(){
   FILE * source = fopen(".hist_list", "w+");
   int i,j;
@@ -355,6 +371,8 @@ void save_history(){
   fclose (source);
 }
 
+/*Loads all elements in file .hist_list into the history array. */
+//***BUFFER PROBLEM?
 void load_history(){
   FILE * source = fopen(".hist_list", "r");
   char **temp_hist = malloc(MAX_HISTORY_SIZE * sizeof(char*));
@@ -401,9 +419,11 @@ void load_history(){
   fclose(source);
 }
 
+/*Adds an alias to the aliases array.
+Overwrites the element if it already exists in the array.
+*/ //***BUFFER PROBLEM??
 int add_alias(char **arguments){
   int i,index;
-  int k = 0;
   int j = 3;
   int existing_alias = 1;
   char *temp_cmd = malloc(STRINGSIZE * sizeof(char*));
@@ -460,30 +480,37 @@ int add_alias(char **arguments){
         }while(arguments[j] != NULL);
       }
     }
-
       alias_array[alias_index].cmd = strdup(temp_cmd);
       alias_array[alias_index].command_id = alias_counter;
       alias_index = alias_index + 1;
       alias_counter++;
       return 1;
-  }else if(arguments[1] == NULL && arguments[2] == NULL){
-    for(i = 0; i < MAX_ALIAS_SIZE; i++){
-      if(alias_array[i].alias != NULL){
-        printf("ID: %d Alias: %s  Command: %s\n",alias_array[i].command_id,alias_array[i].alias,alias_array[i].cmd);
-      }else{
-        k++;
-      }
-    }
-    if(k == MAX_ALIAS_SIZE){
-      fprintf(stderr, "No aliases found.\n");
-    }
-    return 1;
   }else{
     fprintf(stderr, "Invalid arguments.\n");
     return 1;
   }
 }
 
+/*Prints all aliases currently in the array.*/
+int print_aliases(){
+  int i;
+  int k = 0;
+
+  for(i = 0; i < MAX_ALIAS_SIZE; i++){
+    if(alias_array[i].alias != NULL){
+      printf("ID: %d Alias: %s  Command: %s\n",alias_array[i].command_id,alias_array[i].alias,alias_array[i].cmd);
+    }else{
+      k++;
+    }
+  }
+  if(k == MAX_ALIAS_SIZE){
+    fprintf(stderr, "No aliases found.\n");
+  }
+
+  return 1;
+}
+
+/*Removes an alias from the aliases array. */
 int remove_alias(char **arguments){
   int i,index;
   int count = 0;
@@ -520,18 +547,14 @@ int remove_alias(char **arguments){
   return 1;
 }
 
+/*Changes the value of the command variable in an ALIAS struct.*/
 void change_alias(struct ALIAS *a, char *new){
   a->cmd = new;
 }
 
+/*Checks if the argument entered is an alias. Returns the command if it is, returns the argument if its not.*/
+//***BUFFER PROBLEM HERE?
 char **get_alias(char **arguments){
-  //LOOP THROUGH THE ARRAY OF ALIASES - DONE
-  //CHECK IF THE COMMAND ENTERED IS AN ALIAS - DONE
-  //IF IT IS - DONE
-      //CHECK IF THE COMMAND IT HOLDS IS ALSO AN ALIAS (repeat until not found) - HERE
-  //PARSE COMMAND TO ARGUMENTS - DONE
-  //RETURN THE COMMAND - DONE
-
   int i,j;
   char *temp_cmd = malloc(STRINGSIZE * sizeof(char*));
   char *temp_arg = malloc(STRINGSIZE * sizeof(char*));
@@ -561,6 +584,7 @@ char **get_alias(char **arguments){
   return arguments;
 }
 
+/*Saves all elements currently in the alias array to the .aliases file. */
 void save_aliases(){
   FILE * source = fopen(".aliases", "w+");
   int i,j;
@@ -574,6 +598,7 @@ void save_aliases(){
   fclose (source);
 }
 
+/*Loads all elements in the .aliases file into the aliases array.*/
 void load_aliases(){
   FILE * source = fopen(".aliases", "r");
   char buffer[STRINGSIZE+1];
@@ -600,6 +625,7 @@ void load_aliases(){
   fclose(source);
 }
 
+/*Creates a child process.*/
 int create_process(char **arguments){
   pid_t pid;
   pid = fork();

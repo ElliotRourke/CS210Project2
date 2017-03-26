@@ -1,3 +1,8 @@
+/*
+The infunctions.c file holds all built-in functions that are required by the shell.
+*/
+
+/*Import libraries used.*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -5,6 +10,7 @@
 #include <ctype.h>
 #include "infunctions.h"
 
+/*Moves the user backwards and forwards through the file system depending on input. */
 int shell_cd(char **arguments){
   if(arguments[1] == NULL){
     chdir(getenv("HOME"));
@@ -16,6 +22,7 @@ int shell_cd(char **arguments){
   return 1;
 }
 
+/*Retrieves the current PATH variable of the system.*/
 int shell_getpath(char **arguments){
   if(arguments[1] == NULL){
     const char * current_path = getenv("PATH");
@@ -26,6 +33,7 @@ int shell_getpath(char **arguments){
   return 1;
 }
 
+/*Sets the PATH variable of the system to the user input.*/
 int shell_setpath(char **arguments){
   const char * alt_path = arguments[1];
 
@@ -38,21 +46,5 @@ int shell_setpath(char **arguments){
     arguments[1] = '\0';
     shell_getpath(arguments);
   }
-  return 1;
-}
-
-int shell_help(char **arguments){
-  if(arguments[1] == NULL){
-    printf("|| General Help List || \n \n");
-    printf("cd : Changed directory , cd <directory> , can chain changes i.e cd <directory/directory/directory, can return to previous directory cd .. as argument.\n");
-    printf("ls : Lists the elements in the current directory. \n");
-    printf("pwd : Prints the current working directory.\n");
-    printf("getpath : Prints the current value of PATH. \n");
-    printf("setpath : Allows the user to change the value of PATH by entering 'setpath <PATH STRING>'.\n");
-    printf("\n");
-  }else{
-    fprintf(stderr, "Error: No arguments expected\n");
-  }
-
   return 1;
 }
