@@ -116,7 +116,6 @@ char *read_input(){
   char *line;
   char *cmd = malloc(buffer_size * sizeof(char*));
   char *buffer = malloc(buffer_size * sizeof(char*));
-  int check;
 
   if(!buffer){
     fprintf(stderr, "Shell : Error allocating memory.\n");
@@ -266,11 +265,11 @@ int shell_history(){
  * Then executes the retrieved commands.
  */
 char **shell_past_command(char **arguments){
-  int a = 0;
-  char *str;
-  int b = 0;
-  int c = 0;
+  int a = 0;        /*The number entered for !<no> and !-<no> history calls. */
+  int b = 0;        /*The current history counter. */
+  int c = 0;        /*The result of the calculation. (b - a) */
   int i,j;
+  char *str;        /*Pointer for strol functions. */
   char *temp_cmd = malloc(STRINGSIZE * sizeof(char*));
   char *temp_arg = malloc(STRINGSIZE * sizeof(char*));
 
@@ -377,12 +376,14 @@ void save_history(){
   FILE * source = fopen(".hist_list", "w+");
   int i,j;
 
+  /*Prints first half of the history array. */
   for(i = history_index; i < MAX_HISTORY_SIZE; i++){
     if(history_array[i].cmd){
       fprintf(source, "%d %s",history_array[i].command_id,history_array[i].cmd);
     }
   }
 
+  /*Prints second half of the history array. */
   for(j = 0; j < history_index; j++){
     if(history_array[j].cmd){
       fprintf(source, "%d %s",history_array[j].command_id,history_array[j].cmd);
@@ -396,11 +397,11 @@ void save_history(){
 /*Loads all elements in file .hist_list into the history array. */
 void load_history(){
   FILE * source = fopen(".hist_list", "r");
+  char *str;
   char **temp_hist = malloc(MAX_HISTORY_SIZE * sizeof(char*));
+  char **cmds;
   char buffer[STRINGSIZE+1];
   char cmd[STRINGSIZE+1];
-  char *str;
-  char **cmds;
   int cmd_id,i,j;
 
   if(!source){
@@ -593,18 +594,18 @@ char **get_alias(char **arguments){
           strncpy(temp_cmd,alias_array[i].cmd,STRINGSIZE+1);
           arguments = parse_input(temp_cmd);
         }else{
-            j = 1;
-            strncpy(temp_cmd,alias_array[i].cmd,STRINGSIZE+1);
-            do{
-              if(arguments[j] != NULL){
-                strncpy(temp_arg,arguments[j],STRINGSIZE+1);
-              }
-              strncat(temp_cmd," ",STRINGSIZE+1);
-              strncat(temp_cmd,temp_arg,STRINGSIZE+1);
-              j++;
-            }while(arguments[j] != NULL);
-            arguments = parse_input(temp_cmd);
-          }
+          j = 1;
+          strncpy(temp_cmd,alias_array[i].cmd,STRINGSIZE+1);
+          do{
+            if(arguments[j] != NULL){
+              strncpy(temp_arg,arguments[j],STRINGSIZE+1);
+            }
+            strncat(temp_cmd," ",STRINGSIZE+1);
+            strncat(temp_cmd,temp_arg,STRINGSIZE+1);
+            j++;
+          }while(arguments[j] != NULL);
+          arguments = parse_input(temp_cmd);
+        }
       }
     }
   }
@@ -630,9 +631,9 @@ void save_aliases(){
 /*Loads all elements in the .aliases file into the aliases array.*/
 void load_aliases(){
   FILE * source = fopen(".aliases", "r");
-  char buffer[STRINGSIZE+1];
   char **temp_alias = malloc(MAX_ALIAS_SIZE * sizeof(char*));
   char **cmds;
+  char buffer[STRINGSIZE+1];
 
   if(!source){
     fprintf(stderr, "Error unable to open Alias file.\n");
