@@ -111,7 +111,7 @@ char *read_input(){
     exit(EXIT_FAILURE);
   }
   line = fgets(buffer, buffer_size,stdin);
-  strcpy(cmd,buffer);
+  strncpy(cmd,buffer,STRINGSIZE);
 
   if((strcspn(cmd,"!") == 0) || (cmd[0] == '\n') || (line == NULL)){
     return line;
@@ -218,7 +218,7 @@ void add_to_history(char *input){
     free(history_array[history_index].cmd);
   }
 
-  history_array[history_index].cmd = strdup(input);
+  history_array[history_index].cmd = strndup(input,STRINGSIZE+1);
   history_array[history_index].command_id = history_counter;
   history_index = (history_index + 1 ) % MAX_HISTORY_SIZE;
   history_counter++;
@@ -247,7 +247,7 @@ int shell_history(){
  * !<no> retrieves the history element listed under that number from history.
  * !-<no> retrieves the history element listed under the number from the current element minus the number.
  * Then executes the retrieved commands.
- */ //***BUFFER PROBLEM?
+ */
 char **shell_past_command(char **arguments){
   int a = 0;
   char *str;
@@ -257,23 +257,24 @@ char **shell_past_command(char **arguments){
   char *temp_cmd = malloc(STRINGSIZE * sizeof(char*));
   char *temp_arg = malloc(STRINGSIZE * sizeof(char*));
 
+  /*Checks if !! history call was entered. */
   if(strcmp(arguments[0],"!!") == 0){
     if(history_array[history_index-1].cmd == NULL){
       arguments[0] = NULL;
       fprintf(stderr, "ERROR: No elements in history.\n");
     }else{
       if(arguments[1] == NULL){
-        strcpy(temp_cmd,history_array[history_index-1].cmd);
+        strncpy(temp_cmd,history_array[history_index-1].cmd,STRINGSIZE+1);
         arguments = parse_input(temp_cmd);
       }else{
           i = 1;
-          strcpy(temp_cmd,history_array[history_index-1].cmd);
+          strncpy(temp_cmd,history_array[history_index-1].cmd,STRINGSIZE+1);
           do{
             if(arguments[i] != NULL){
-              strcpy(temp_arg,arguments[i]);
+              strncpy(temp_arg,arguments[i],STRINGSIZE+1);
             }
-            strcat(temp_cmd," ");
-            strcat(temp_cmd,temp_arg);
+            strncat(temp_cmd," ",STRINGSIZE+1);
+            strncat(temp_cmd,temp_arg,STRINGSIZE+1);
             i++;
           }while(arguments[i] != NULL);
           arguments = parse_input(temp_cmd);
@@ -281,7 +282,8 @@ char **shell_past_command(char **arguments){
       }
     return arguments;
   }
-  //CHECK IF ARGUMENT() 03/02 IS GREATER THAN LENGHT OR NOT A DIDGIT?
+
+  /*Checks if !<no> history call was entered. */
   if((arguments[0][0]=='!') && (arguments[0][1]!='-')){
     a = strtol(&arguments[0][1],&str,10);
     if((a <= 0) || (a > history_counter)){
@@ -291,15 +293,15 @@ char **shell_past_command(char **arguments){
     }
     for(i = 0; i < MAX_HISTORY_SIZE; i ++){
       if(history_array[i].command_id == a){
-        strcpy(temp_cmd,history_array[i].cmd);
+        strncpy(temp_cmd,history_array[i].cmd,STRINGSIZE+1);
         if(arguments[1] != NULL){
           j = 1;
           do{
             if(arguments[j] != NULL){
-              strcpy(temp_arg,arguments[j]);
+              strncpy(temp_arg,arguments[j],STRINGSIZE+1);
             }
-            strcat(temp_cmd," ");
-            strcat(temp_cmd,temp_arg);
+            strncat(temp_cmd," ",STRINGSIZE+1);
+            strncat(temp_cmd,temp_arg,STRINGSIZE+1);
             j++;
           }while(arguments[j] != NULL);
           arguments = parse_input(temp_cmd);
@@ -312,6 +314,7 @@ char **shell_past_command(char **arguments){
     }
   }
 
+  /*Checks if !-<no> history call is entered. */
   if((arguments[0][1]=='-') && (arguments[0][0]=='!')){
     a = strtol(&arguments[0][2],&str,10);
     b = history_counter;
@@ -327,15 +330,15 @@ char **shell_past_command(char **arguments){
       fprintf(stderr, "ERROR: Not valid history function. Command index specified is less than 1.\n");
       return arguments;
     }
-    strcpy(temp_cmd,history_array[c-1].cmd);
+    strncpy(temp_cmd,history_array[c-1].cmd,STRINGSIZE+1);
     if(arguments[1] != NULL){
       i = 1;
       do{
         if(arguments[i] != NULL){
-          strcpy(temp_arg,arguments[i]);
+          strncpy(temp_arg,arguments[i],STRINGSIZE+1);
         }
-        strcat(temp_cmd," ");
-        strcat(temp_cmd,temp_arg);
+        strncat(temp_cmd," ",STRINGSIZE+1);
+        strncat(temp_cmd,temp_arg,STRINGSIZE+1);
         i++;
       }while(arguments[i] != NULL);
       arguments = parse_input(temp_cmd);
@@ -372,7 +375,6 @@ void save_history(){
 }
 
 /*Loads all elements in file .hist_list into the history array. */
-//***BUFFER PROBLEM?
 void load_history(){
   FILE * source = fopen(".hist_list", "r");
   char **temp_hist = malloc(MAX_HISTORY_SIZE * sizeof(char*));
@@ -397,16 +399,16 @@ void load_history(){
     }
 
     cmds = parse_input(buffer);
-    strcpy(cmd,cmds[1]);
+    strncpy(cmd,cmds[1],STRINGSIZE+1);
 
     for(i = 2; i < STRINGSIZE; i++){
       if(cmds[i] != NULL){
-        strcat(cmd," ");
-        strcat(cmd,cmds[i]);
+        strncat(cmd," ",STRINGSIZE+1);
+        strncat(cmd,cmds[i],STRINGSIZE+1);
       }
     }
-    strcat(cmd,"\n");
-    temp_hist[j] = strdup(cmd);
+    strncat(cmd,"\n",STRINGSIZE+1);
+    temp_hist[j] = strndup(cmd,STRINGSIZE+1);
     j++;
   }
 
@@ -421,7 +423,7 @@ void load_history(){
 
 /*Adds an alias to the aliases array.
 Overwrites the element if it already exists in the array.
-*/ //***BUFFER PROBLEM??
+*/
 int add_alias(char **arguments){
   int i,index;
   int j = 3;
@@ -434,7 +436,8 @@ int add_alias(char **arguments){
       free(alias_array[alias_index].alias);
       free(alias_array[alias_index].cmd);
     }
-    //Check if it exsists here
+
+    /*Check if the alias exists in the alias array. */
     for(i = 0; i < MAX_ALIAS_SIZE; i++){
       if(alias_array[i].alias){
         if(strcmp(alias_array[i].alias,arguments[1]) == 0){
@@ -444,43 +447,44 @@ int add_alias(char **arguments){
       }
     }
 
+    /*Check if the alias array is full.*/
     if(alias_index >= MAX_ALIAS_SIZE && existing_alias != 0){
         fprintf(stderr, "Alias list full. Cannot add alias.\n");
         return 1;
       }
 
-    //OVERWRITE CASE
+    /*If the alias does exist, overwrite the alias. */
     if(existing_alias ==  0){
-      strncpy(temp_cmd,arguments[2],STRINGSIZE);
+      strncpy(temp_cmd,arguments[2],STRINGSIZE+1);
       do{
         if(arguments[j] != NULL){
-          strcpy(temp_arg,arguments[j]);
+          strncpy(temp_arg,arguments[j],STRINGSIZE+1);
         }
-        strcat(temp_cmd," ");
-        strcat(temp_cmd,temp_arg);
+        strncat(temp_cmd," ",STRINGSIZE+1);
+        strncat(temp_cmd,temp_arg,STRINGSIZE+1);
         j++;
       }while(arguments[j] != NULL);
       change_alias(&alias_array[index],temp_cmd);
       fprintf(stderr, "Alias %s has been overwritten.\n",alias_array[index].alias);
       return 1;
     }else{
-      //NEW ALIAS CASE
+      /*If the alias does not exist, add the new alias. */
       alias_array[alias_index].alias = strdup(arguments[1]);
       if(arguments[3] == NULL){
-        strncpy(temp_cmd,arguments[2],STRINGSIZE);
+        strncpy(temp_cmd,arguments[2],STRINGSIZE+1);
       }else{
-        strncpy(temp_cmd,arguments[2],STRINGSIZE);
+        strncpy(temp_cmd,arguments[2],STRINGSIZE+1);
         do{
           if(arguments[j] != NULL){
-            strcpy(temp_arg,arguments[j]);
+            strncpy(temp_arg,arguments[j],STRINGSIZE+1);
           }
-          strcat(temp_cmd," ");
-          strcat(temp_cmd,temp_arg);
+          strncat(temp_cmd," ",STRINGSIZE+1);
+          strncat(temp_cmd,temp_arg,STRINGSIZE+1);
           j++;
         }while(arguments[j] != NULL);
       }
     }
-      alias_array[alias_index].cmd = strdup(temp_cmd);
+      alias_array[alias_index].cmd = strndup(temp_cmd,STRINGSIZE+1);
       alias_array[alias_index].command_id = alias_counter;
       alias_index = alias_index + 1;
       alias_counter++;
@@ -553,7 +557,6 @@ void change_alias(struct ALIAS *a, char *new){
 }
 
 /*Checks if the argument entered is an alias. Returns the command if it is, returns the argument if its not.*/
-//***BUFFER PROBLEM HERE?
 char **get_alias(char **arguments){
   int i,j;
   char *temp_cmd = malloc(STRINGSIZE * sizeof(char*));
@@ -563,17 +566,17 @@ char **get_alias(char **arguments){
     if(alias_array[i].alias){
       if(strcmp(alias_array[i].alias,arguments[0]) == 0){
         if(arguments[1] == NULL){
-          strcpy(temp_cmd,alias_array[i].cmd);
+          strncpy(temp_cmd,alias_array[i].cmd,STRINGSIZE+1);
           arguments = parse_input(temp_cmd);
         }else{
             j = 1;
-            strcpy(temp_cmd,alias_array[i].cmd);
+            strncpy(temp_cmd,alias_array[i].cmd,STRINGSIZE+1);
             do{
               if(arguments[j] != NULL){
-                strcpy(temp_arg,arguments[j]);
+                strncpy(temp_arg,arguments[j],STRINGSIZE+1);
               }
-              strcat(temp_cmd," ");
-              strcat(temp_cmd,temp_arg);
+              strncat(temp_cmd," ",STRINGSIZE+1);
+              strncat(temp_cmd,temp_arg,STRINGSIZE+1);
               j++;
             }while(arguments[j] != NULL);
             arguments = parse_input(temp_cmd);

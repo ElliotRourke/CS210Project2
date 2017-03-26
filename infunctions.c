@@ -12,6 +12,11 @@ The infunctions.c file holds all built-in functions that are required by the she
 
 /*Moves the user backwards and forwards through the file system depending on input. */
 int shell_cd(char **arguments){
+  if(arguments[2] != NULL){
+    fprintf(stderr, "ERROR: Invalid arguments.\n");
+    return 1;
+  }
+
   if(arguments[1] == NULL){
     chdir(getenv("HOME"));
   }else{
@@ -37,7 +42,12 @@ int shell_getpath(char **arguments){
 int shell_setpath(char **arguments){
   const char * alt_path = arguments[1];
 
-  if(alt_path == NULL || strcmp(alt_path,"/") == 0 || strcmp(alt_path,"/ we") == 0 ){
+  if(arguments[2] != NULL){
+    fprintf(stderr, "ERROR: Invalid arguments.\n");
+    return 1;
+  }
+
+  if((alt_path == NULL) || (strcmp(alt_path,"/") == 0) || (strcmp(alt_path,"/ we") == 0) ){
     fprintf(stderr, "Missing required arguments : setpath <PATH>\n");
     return 1;
   }else{
