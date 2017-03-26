@@ -2,6 +2,7 @@
 The main.c file handles the user input, saving, loading and initialisation of the shells functions.
 */
 
+
 /*Import libraries used.*/
 #include <stdio.h>
 #include <string.h>
@@ -12,12 +13,14 @@ The main.c file handles the user input, saving, loading and initialisation of th
 #include <ctype.h>
 #include "infunctions.h"
 
+
 /* Define constants. */
 #define STRINGSIZE 50
 #define MAX_HISTORY_SIZE 20
 #define MAX_ALIAS_SIZE 10
 
-/* Define functions. */ //***ARE THERE ANY FUNCTIONS WE CAN BREAKDOWN/MOVE
+
+/* Define functions. */
 void command_loop();
 char *read_input();
 char **parse_input(char *input);
@@ -35,18 +38,23 @@ void save_aliases();
 void load_aliases();
 int create_process(char **arguments);
 
+
 /* Global variables used to control the position of elements in history array. */
 int history_index = 0;
 int history_counter = 1;
+
+
 /* Global variables used to control the position of elements in aliases array. */
 int alias_index = 0;
 int alias_counter = 1;
+
 
 /*Array of structs that hold the required data for commands stored in history.*/
 struct HISTORY{
   int command_id;
   char *cmd;
 }history_array[MAX_HISTORY_SIZE];
+
 
 /*Array of structs that hold the required data for commands stored as an alias. */
 struct ALIAS{
@@ -55,8 +63,10 @@ struct ALIAS{
   char *alias;
 }alias_array[MAX_ALIAS_SIZE];
 
+
 /*Definition of this function after the ALIAS struct is required. */
 void change_alias(struct ALIAS *x, char *cmd);
+
 
 /* Main function that initialises the environment, loads files and starts the command loop.*/
 int main(int argc, char const *argv[]){
@@ -72,6 +82,7 @@ int main(int argc, char const *argv[]){
   setenv("PATH",old_path,1);
   return 0;
 }
+
 
 /*Allows the user to repeatedly enter input into the shell for execution. Until exit condtions are met.*/
 void command_loop(){
@@ -98,6 +109,7 @@ void command_loop(){
 
 }
 
+
 /*Returns the entered user input. */ //***BUFFER PROBLEM?
 char *read_input(){
   ssize_t buffer_size = STRINGSIZE;
@@ -121,6 +133,7 @@ char *read_input(){
 
   return line;
 }
+
 
 /*Tokenises the input from the user and returns an array of tokens. */
 char **parse_input(char *input){
@@ -153,6 +166,7 @@ char **parse_input(char *input){
 
   return tokens;
 }
+
 
 /*Takes parsed input and if possible matches it to a funtion within the shell. Else returns an error. */
 int execute_input(char **arguments){
@@ -212,6 +226,7 @@ int execute_input(char **arguments){
   return create_process(arguments);
 }
 
+
 /*Adds the user input to the history array.*/
 void add_to_history(char *input){
   if(history_array[history_index].cmd != NULL){
@@ -223,6 +238,7 @@ void add_to_history(char *input){
   history_index = (history_index + 1 ) % MAX_HISTORY_SIZE;
   history_counter++;
 }
+
 
 /*Prints the history array. */
 int shell_history(){
@@ -241,6 +257,7 @@ int shell_history(){
   }
   return 1;
 }
+
 
 /*Retrieves past commands from the history depending on the history function used.
  * !! retrieves the most recent item in history.
@@ -354,6 +371,7 @@ char **shell_past_command(char **arguments){
   return arguments;
 }
 
+
 /*Saves all elements currently in the history array to file .hist_list. */
 void save_history(){
   FILE * source = fopen(".hist_list", "w+");
@@ -373,6 +391,7 @@ void save_history(){
 
   fclose (source);
 }
+
 
 /*Loads all elements in file .hist_list into the history array. */
 void load_history(){
@@ -421,9 +440,10 @@ void load_history(){
   fclose(source);
 }
 
-/*Adds an alias to the aliases array.
-Overwrites the element if it already exists in the array.
-*/
+
+/* Adds an alias to the aliases array.
+ * Overwrites the element if it already exists in the array.
+ */
 int add_alias(char **arguments){
   int i,index;
   int j = 3;
@@ -495,6 +515,7 @@ int add_alias(char **arguments){
   }
 }
 
+
 /*Prints all aliases currently in the array.*/
 int print_aliases(){
   int i;
@@ -513,6 +534,7 @@ int print_aliases(){
 
   return 1;
 }
+
 
 /*Removes an alias from the aliases array. */
 int remove_alias(char **arguments){
@@ -551,10 +573,12 @@ int remove_alias(char **arguments){
   return 1;
 }
 
+
 /*Changes the value of the command variable in an ALIAS struct.*/
 void change_alias(struct ALIAS *a, char *new){
   a->cmd = new;
 }
+
 
 /*Checks if the argument entered is an alias. Returns the command if it is, returns the argument if its not.*/
 char **get_alias(char **arguments){
@@ -587,6 +611,7 @@ char **get_alias(char **arguments){
   return arguments;
 }
 
+
 /*Saves all elements currently in the alias array to the .aliases file. */
 void save_aliases(){
   FILE * source = fopen(".aliases", "w+");
@@ -600,6 +625,7 @@ void save_aliases(){
 
   fclose (source);
 }
+
 
 /*Loads all elements in the .aliases file into the aliases array.*/
 void load_aliases(){
@@ -627,6 +653,7 @@ void load_aliases(){
   }
   fclose(source);
 }
+
 
 /*Creates a child process.*/
 int create_process(char **arguments){
